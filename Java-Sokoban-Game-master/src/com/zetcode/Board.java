@@ -1,22 +1,23 @@
 package com.zetcode;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
-import javax.swing.JPanel;
+
+import javax.swing.*;
+
+import com.zetcode.LevelPanel.*;
 
 public class Board extends JPanel {
 
-    private final int OFFSET = 30; // 공백을 줘서 알아보게 쉽게함
+    private final int OFFSET = 30;
     private final int SPACE = 20;
     private final int LEFT_COLLISION = 1;
     private final int RIGHT_COLLISION = 2;
     private final int TOP_COLLISION = 3;
     private final int BOTTOM_COLLISION = 4;
     private int levelSelected;
-
+    
     private ArrayList<Wall> walls;
     private ArrayList<Baggage> baggs;
     private ArrayList<Area> areas;
@@ -28,78 +29,102 @@ public class Board extends JPanel {
     private boolean isCompleted = false;
 
     private String level[] ={
-            "    ######\n"
-          + "    ##   #\n"
-          + "    ##$  #\n"
-          + "  ####  $##\n"
-          + "  ##  $ $ #\n"
-          + "#### # ## #   ######\n"
-          + "##   # ## #####  ..#\n"
-          + "## $  $          ..#\n"
-          + "###### ### #@##  ..#\n"
-          + "    ##     #########\n"
-          + "    ########\n",
-          
-      		"    ######\n"
-          + "############\n"
-          + "#..  #     ###\n"
-          + "#..  # $  $  #\n"
-          + "#..  #$####  #\n"
-          + "#..    @ ##  #\n"
-          + "#..  # #  $ ##\n"
-          + "###### ##$ $ #\n"
-          + "  # $  $ $ $ #\n"
-          + "  #    #     #\n"
-          + "  ############\n",
-          
-      	  "        ######## \n"
-          + "        #     @# \n"
-          + "        # $#$ ## \n"
-          + "        # $  $# \n"
-          + "        ##$ $ # \n"
-          + "######### $ # ###\n"
-          + "#....  ## $  $  #\n"
-          + "##...    $  $   #\n"
-          + "#....  ##########\n"
-          + "########         \n", 
-          
-            "              ########\n"
-          + "              #  ....#\n"
-          + "   ############  ....#\n"
-          + "   #    #  $ $   ....#\n"
-          + "   # $$$#$  $ #  ....#\n"
-          + "   #  $     $ #  ....#\n"
-          + "   # $$ #$ $ $########\n"
-          + "####  $ #     #       \n"
-          + "#   # #########       \n"
-          + "#    $  ##            \n"
-          + "# $$#$$ @#            \n"
-          + "#   #   ##            \n"
-          + "#########             \n",
-          
-            "        #####    \n"
-          + "        #   #####\n"
-          + "        # #$##  #\n"
-          + "        #     $ #\n"
-          + "######### ###   #\n"
-          + "#....  ## $  $###\n"
-          + "#....    $ $$ ## \n"
-          + "#....  ##$  $ @# \n"
-          + "#########  $  ## \n"
-          + "        # $ $  # \n"
-          + "        ### ## # \n"
-          + "          #    # \n"
-          + "          ###### \n"
-          };
+              "    ######\n"
+            + "    ##   #\n"
+            + "    ##$  #\n"
+            + "  ####  $##\n"
+            + "  ##  $ $ #\n"
+            + "#### # ## #   ######\n"
+            + "##   # ## #####  ..#\n"
+            + "## $  $          ..#\n"
+            + "###### ### #@##  ..#\n"
+            + "    ##     #########\n"
+            + "    ########\n",
+            
+        		"    ######\n"
+            + "############\n"
+            + "#..  #     ###\n"
+            + "#..  # $  $  #\n"
+            + "#..  #$####  #\n"
+            + "#..    @ ##  #\n"
+            + "#..  # #  $ ##\n"
+            + "###### ##$ $ #\n"
+            + "  # $  $ $ $ #\n"
+            + "  #    #     #\n"
+            + "  ############\n",
+            
+        	  "        ######## \n"
+            + "        #     @# \n"
+            + "        # $#$ ## \n"
+            + "        # $  $# \n"
+            + "        ##$ $ # \n"
+            + "######### $ # ###\n"
+            + "#....  ## $  $  #\n"
+            + "##...    $  $   #\n"
+            + "#....  ##########\n"
+            + "########         \n", 
+            
+              "              ########\n"
+            + "              #  ....#\n"
+            + "   ############  ....#\n"
+            + "   #    #  $ $   ....#\n"
+            + "   # $$$#$  $ #  ....#\n"
+            + "   #  $     $ #  ....#\n"
+            + "   # $$ #$ $ $########\n"
+            + "####  $ #     #       \n"
+            + "#   # #########       \n"
+            + "#    $  ##            \n"
+            + "# $$#$$ @#            \n"
+            + "#   #   ##            \n"
+            + "#########             \n",
+            
+              "        #####    \n"
+            + "        #   #####\n"
+            + "        # #$##  #\n"
+            + "        #     $ #\n"
+            + "######### ###   #\n"
+            + "#....  ## $  $###\n"
+            + "#....    $ $$ ## \n"
+            + "#....  ##$  $ @# \n"
+            + "#########  $  ## \n"
+            + "        # $ $  # \n"
+            + "        ### ## # \n"
+            + "          #    # \n"
+            + "          ###### \n"
+            };
+    
+    private LevelPanel previousPanel;
+    private JButton backSpaceButton = new JButton("<-");
+    private GameStart frame;
 
-    public Board(int levelSelected) {
+    public Board(int levelSelected, LevelPanel previousPanel, GameStart frame) {
     	
+    	setLayout(null);
+    	
+    	this.previousPanel = previousPanel;
     	this.levelSelected=levelSelected;
-        initBoard();
+    	this.frame=frame;
+    	
+    	add(backSpaceButton);
+    	backSpaceButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JButton b = (JButton) e.getSource();
+				
+				if(b.equals(backSpaceButton)) {
+					frame.changePanel(previousPanel);
+					frame.setSize(500,300);
+				}
+				
+			}
+		}); // 뒤로가기 버튼에 액션리스너 등록
+		backSpaceButton.setBounds(25, 20, 45, 20);
+		initBoard();
     }
 
     private void initBoard() {
-
+    	
         addKeyListener(new TAdapter());
         setFocusable(true);
         initWorld();
@@ -119,8 +144,8 @@ public class Board extends JPanel {
         baggs = new ArrayList<>();
         areas = new ArrayList<>();
 
-        int x = OFFSET; //30
-        int y = OFFSET; //30 위에 한칸을 띄어주기 위해 y 초기값에 30설정
+        int x = OFFSET;
+        int y = OFFSET;
 
         Wall wall; // 벽
         Baggage b; //미는거
@@ -135,17 +160,17 @@ public class Board extends JPanel {
                 case '\n':
                     y += SPACE;
 
-                    if (this.w < x) { //한번 줄 바꿈이 될 떄 마다 x의 크기를 검사, width의 크기를 x가 가장 큰걸로 함
+                    if (this.w < x) { //width의 크기를 x가 가장 큰걸로 함
                         this.w = x;
                     }
 
-                    x = OFFSET; //한번 줄바꿈이 되면 x=OFFSET으로 다시 초기화 왼쪽에 한칸 띄어주기 위해서
+                    x = OFFSET; //한번 줄바꿈이 되면 x=OFF으로 다시 초기화
                     break;
 
                 case '#':
                     wall = new Wall(x, y); //x,y 지점에 Wall 객체 생성
                     walls.add(wall); // Wall 객체를 Wall 어레이 리스트에 넣음
-                    x += SPACE; // x에 한칸(SPACE(20))를 더함
+                    x += SPACE; // x에 한칸(SPACE)를 더함
                     break;
 
                 case '$':
@@ -155,7 +180,7 @@ public class Board extends JPanel {
                     break;
 
                 case '.':
-                    a = new Area(x, y); // x,y 지점에 Area 객체 생성
+                    a = new Area(x, y); // 끝나는 지점
                     areas.add(a); //a == Area 객체
                     x += SPACE;
                     break;
@@ -194,12 +219,11 @@ public class Board extends JPanel {
             Actor item = world.get(i);
 
             if (item instanceof Player || item instanceof Baggage) {
-            	
-                g.drawImage(item.getImage(), item.x() + 2, item.y() + 2, this); // 16픽셀이여서 가운데 맞춰줄라고 +2 함
-            } 
-            else {
                 
-                g.drawImage(item.getImage(), item.x(), item.y(), this); // 이것도
+                g.drawImage(item.getImage(), item.x() + 2, item.y() + 2, this);
+            } else {
+                
+                g.drawImage(item.getImage(), item.x(), item.y(), this);
             }
 
             if (isCompleted) { //isCompleted가 true면 화면에 completed를 띄움
@@ -365,7 +389,7 @@ public class Board extends JPanel {
                 break;
         }
         
-        return false; //false 를 리턴하므로써 reprint()가 가능하게함
+        return false;
     }
 
     private boolean checkBagCollision(int type) { //Bag 객체의 충돌
@@ -401,7 +425,7 @@ public class Board extends JPanel {
                     }
                 }
                 
-                return false; //false를 리턴하여 reprint()를 하게함
+                return false;
                 
             case RIGHT_COLLISION: // 오른쪽 키가 눌렸을때
                 
@@ -431,7 +455,7 @@ public class Board extends JPanel {
                         isCompleted(); //bag객체가 움직인 후 게임이 끝났는지 검사함.
                     }
                 }
-                return false; //false를 리턴하여 reprint()를 하게함
+                return false;
                 
             case TOP_COLLISION:
                 
@@ -462,7 +486,7 @@ public class Board extends JPanel {
                     }
                 }
 
-                return false; //false를 리턴하여 reprint()를 하게함
+                return false;
                 
             case BOTTOM_COLLISION:
                 
@@ -500,13 +524,13 @@ public class Board extends JPanel {
                 break;
         }
 
-        return false; //false를 리턴하여 reprint()를 하게함
+        return false;
     }
 
     public void isCompleted() { //다 최종지점에 넣었을경우 isCompleted=true
 
         int nOfBags = baggs.size(); //Bag 객체의 숫자
-        int finishedBags = 0; // Bag객체의 숫자와 finishedBags가 isCompleted=true == 게임 종료
+        int finishedBags = 0; // Bag객체의 숫자와 finishedBags가 isCompleted=ture == 게임 종료
 
         for (int i = 0; i < nOfBags; i++) {
             
@@ -516,7 +540,7 @@ public class Board extends JPanel {
                 
                 Area area =  areas.get(j); // 끝나는 지점
                 
-                if (bag.x() == area.x() && bag.y() == area.y()) { //bag 객체의 x,y와 area 객체의 x,y가 같으면 finishedBags +1증가
+                if (bag.x() == area.x() && bag.y() == area.y()) { //bag x,y와 area x,y가 같으면 finishedBags +1증가
                     
                     finishedBags += 1;
                 }
@@ -542,4 +566,7 @@ public class Board extends JPanel {
             isCompleted = false;
         }
     }
+    
+    
+
 }
