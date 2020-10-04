@@ -15,6 +15,7 @@ public class Board extends JPanel {
     private final int RIGHT_COLLISION = 2;
     private final int TOP_COLLISION = 3;
     private final int BOTTOM_COLLISION = 4;
+    private int levelSelected;
 
     private ArrayList<Wall> walls;
     private ArrayList<Baggage> baggs;
@@ -26,21 +27,74 @@ public class Board extends JPanel {
     
     private boolean isCompleted = false;
 
-    private String level
-            = "    ######\n"
-            + "    ##   #\n"
-            + "    ##$  #\n"
-            + "  ####  $##\n"
-            + "  ##  $ $ #\n"
-            + "#### # ## #   ######\n"
-            + "##   # ## #####  ..#\n"
-            + "## $  $          ..#\n"
-            + "###### ### #@##  ..#\n"
-            + "    ##     #########\n"
-            + "    ########\n";
+    private String level[] ={
+            "    ######\n"
+          + "    ##   #\n"
+          + "    ##$  #\n"
+          + "  ####  $##\n"
+          + "  ##  $ $ #\n"
+          + "#### # ## #   ######\n"
+          + "##   # ## #####  ..#\n"
+          + "## $  $          ..#\n"
+          + "###### ### #@##  ..#\n"
+          + "    ##     #########\n"
+          + "    ########\n",
+          
+      		"    ######\n"
+          + "############\n"
+          + "#..  #     ###\n"
+          + "#..  # $  $  #\n"
+          + "#..  #$####  #\n"
+          + "#..    @ ##  #\n"
+          + "#..  # #  $ ##\n"
+          + "###### ##$ $ #\n"
+          + "  # $  $ $ $ #\n"
+          + "  #    #     #\n"
+          + "  ############\n",
+          
+      	  "        ######## \n"
+          + "        #     @# \n"
+          + "        # $#$ ## \n"
+          + "        # $  $# \n"
+          + "        ##$ $ # \n"
+          + "######### $ # ###\n"
+          + "#....  ## $  $  #\n"
+          + "##...    $  $   #\n"
+          + "#....  ##########\n"
+          + "########         \n", 
+          
+            "              ########\n"
+          + "              #  ....#\n"
+          + "   ############  ....#\n"
+          + "   #    #  $ $   ....#\n"
+          + "   # $$$#$  $ #  ....#\n"
+          + "   #  $     $ #  ....#\n"
+          + "   # $$ #$ $ $########\n"
+          + "####  $ #     #       \n"
+          + "#   # #########       \n"
+          + "#    $  ##            \n"
+          + "# $$#$$ @#            \n"
+          + "#   #   ##            \n"
+          + "#########             \n",
+          
+            "        #####    \n"
+          + "        #   #####\n"
+          + "        # #$##  #\n"
+          + "        #     $ #\n"
+          + "######### ###   #\n"
+          + "#....  ## $  $###\n"
+          + "#....    $ $$ ## \n"
+          + "#....  ##$  $ @# \n"
+          + "#########  $  ## \n"
+          + "        # $ $  # \n"
+          + "        ### ## # \n"
+          + "          #    # \n"
+          + "          ###### \n"
+          };
 
-    public Board() {
-
+    public Board(int levelSelected) {
+    	
+    	this.levelSelected=levelSelected;
         initBoard();
     }
 
@@ -72,9 +126,9 @@ public class Board extends JPanel {
         Baggage b; //미는거
         Area a; //끝나는거
 
-        for (int i = 0; i < level.length(); i++) {
+        for (int i = 0; i < level[levelSelected].length(); i++) {
 
-            char item = level.charAt(i);
+            char item = level[levelSelected].charAt(i);
 
             switch (item) {
 
