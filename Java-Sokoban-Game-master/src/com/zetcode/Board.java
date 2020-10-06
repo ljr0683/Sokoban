@@ -600,7 +600,8 @@ public class Board extends JPanel {
 		return false;
 	}
 
-	private boolean isFailedDetected(Baggage bag) { // failed 조건 detected 메소드, 다른 bag객체가 움직일수 있는지 없는지 판별하는 함수 넣어야함 !!!!!!!!
+	private boolean isFailedDetected(Baggage bag) { 
+		
 		if(bag!=null) {
 			if(checkWallCollision(bag, TOP_COLLISION)) { // 위에 벽 두개 아래 bag 2개
 				System.out.println(1);

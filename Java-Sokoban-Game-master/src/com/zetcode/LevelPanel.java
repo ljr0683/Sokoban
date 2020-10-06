@@ -8,7 +8,7 @@ import com.zetcode.GameStart.*;
 
 public class LevelPanel extends JPanel {
 
-	private JButton[] levelButton = new JButton[5]; // 버튼 5개 선언
+	private JButton[] levelButton = new JButton[6]; // 버튼 5개 선언
 
 	private GameStart frame; // GameStart 클래스의 change 메소드를 사용하기 위해 선언
 	private MainPanel previousPanel; // 뒤로가기 버튼을 위해 선언(전 패널 객체를 얻기 위해)
@@ -39,40 +39,14 @@ public class LevelPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JButton b = (JButton) e.getSource(); // 어떤 버튼이 눌렸는지 알아냄
-
-			if (b.equals(levelButton[0])) { // 첫번쨰 버튼이 눌리면
-				Board board = new Board(0, panel, frame);
-				width = board.getBoardWidth();
-				height = board.getBoardHeight();
-				frame.changePanel(board, width, height);
-			}
-
-			if (b.equals(levelButton[1])) { // 두번째 버튼이 눌리면
-				Board board = new Board(1, panel, frame);
-				width = board.getBoardWidth();
-				height = board.getBoardHeight();
-				frame.changePanel(board, width, height);
-			}
-
-			if (b.equals(levelButton[2])) { // 세번째 버튼이 눌리면
-				Board board = new Board(2, panel, frame);
-				width = board.getBoardWidth();
-				height = board.getBoardHeight();
-				frame.changePanel(board, width, height);
-			}
-
-			if (b.equals(levelButton[3])) { // 네번째 버튼이 눌리면
-				Board board = new Board(3, panel, frame);
-				width = board.getBoardWidth();
-				height = board.getBoardHeight();
-				frame.changePanel(board, width, height);
-			}
-
-			if (b.equals(levelButton[4])) { // 다섯번째 버튼이 눌리면
-				Board board = new Board(4, panel, frame);
-				width = board.getBoardWidth();
-				height = board.getBoardHeight();
-				frame.changePanel(board, width, height);
+			
+			for(int i=0; i<levelButton.length; i++) {
+				if(b.equals(levelButton[i])) {
+					Board board = new Board(0, panel, frame);
+					width = board.getBoardWidth();
+					height = board.getBoardHeight();
+					frame.changePanel(board, width, height);
+				}
 			}
 
 			if (b.equals(backSpaceButton)) { // 뒤로가기 버튼이 눌리면
