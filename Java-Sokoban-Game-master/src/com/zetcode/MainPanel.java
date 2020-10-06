@@ -9,10 +9,10 @@ public class MainPanel extends JPanel {
 	private JButton selectCharacterButton = new JButton("캐릭터 선택");
 	private JButton drawCharacterButton = new JButton("캐릭터 그리기");
 	// 버튼 생성
-	
+
 	private GameStart frame; // GameStart 클래스의 change 메소드를 사용하기 위해 선언
 	private MainPanel panel; // LevelPanel, SelectCharacterPanel, DrawCharacterPanel 객체에 자기 자신을 인자로 넘겨주기 위한
-							// 패널 선언
+								// 패널 선언
 
 	public MainPanel(GameStart frame) { // 생성자
 		setLayout(null); // 레이아웃을 설정 x 내 마음대로 배치 가능

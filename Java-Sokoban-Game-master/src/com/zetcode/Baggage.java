@@ -4,6 +4,8 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 
 public class Baggage extends Actor {
+	
+	private boolean isEntered = false;
 
     public Baggage(int x, int y) {
         super(x, y);
@@ -26,4 +28,13 @@ public class Baggage extends Actor {
         setX(dx);
         setY(dy);
     }
+    
+    public boolean getIsEntered() {
+		return isEntered;
+	}
+
+	public void setIsEntered() {
+		isEntered = true;
+	}
+	
 }

@@ -15,19 +15,21 @@ public class SelectCharacterPanel extends JPanel {
 		setLayout(null);
 		this.frame = frame;
 		this.previousPanel = previousPanel;
+
 		add(la);
+		la.setBounds(100, 100, 110, 20);
+
 		add(backSpaceButton);
 		backSpaceButton.setBounds(25, 20, 45, 20);
 		backSpaceButton.addActionListener(new MyActionListener());
-		la.setBounds(100, 100, 110, 20);
 	}
-	
-	class MyActionListener implements ActionListener{
+
+	class MyActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JButton b = (JButton)e.getSource();
-			
-			if(b.equals(backSpaceButton)) {
+			JButton b = (JButton) e.getSource();
+
+			if (b.equals(backSpaceButton)) {
 				frame.changePanel(previousPanel);
 			}
 		}

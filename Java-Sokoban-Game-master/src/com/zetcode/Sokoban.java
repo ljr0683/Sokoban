@@ -5,7 +5,7 @@ import java.awt.*;
 import javax.swing.JFrame;
 
 public class Sokoban {
-	
+
 	public static void main(String[] args) {
 
 		EventQueue.invokeLater(() -> {
