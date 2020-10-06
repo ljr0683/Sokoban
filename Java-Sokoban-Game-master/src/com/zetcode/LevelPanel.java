@@ -42,7 +42,7 @@ public class LevelPanel extends JPanel {
 			
 			for(int i=0; i<levelButton.length; i++) {
 				if(b.equals(levelButton[i])) {
-					Board board = new Board(0, panel, frame);
+					Board board = new Board(i, panel, frame);
 					width = board.getBoardWidth();
 					height = board.getBoardHeight();
 					frame.changePanel(board, width, height);
