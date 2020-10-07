@@ -22,6 +22,7 @@ public class SelectCharacterPanel extends JPanel {
 		add(backSpaceButton);
 		backSpaceButton.setBounds(25, 20, 45, 20);
 		backSpaceButton.addActionListener(new MyActionListener());
+
 	}
 
 	class MyActionListener implements ActionListener {

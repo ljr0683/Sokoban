@@ -12,7 +12,7 @@ public class MainPanel extends JPanel {
 
 	private GameStart frame; // GameStart 클래스의 change 메소드를 사용하기 위해 선언
 	private MainPanel panel; // LevelPanel, SelectCharacterPanel, DrawCharacterPanel 객체에 자기 자신을 인자로 넘겨주기 위한
-								// 패널 선언
+	// 패널 선언
 
 	public MainPanel(GameStart frame) { // 생성자
 		setLayout(null); // 레이아웃을 설정 x 내 마음대로 배치 가능
@@ -42,7 +42,8 @@ public class MainPanel extends JPanel {
 			JButton b = (JButton) e.getSource(); // 어떤 버튼이 눌렸는지 알아냄
 
 			if (b.equals(levelSelectButton)) { // 레벨 선택 버튼을 눌렀다면
-				frame.changePanel(new LevelPanel(frame, panel)); // GameStart의 changePanel 메소드를 호출하여 LevePanel로 패널 전환
+				frame.changePanel(new LevelPanel(frame, panel)); // GameStart의 changePanel 메소드를 호출하여 LevePanel로 패널
+																		// 전환
 			}
 
 			if (b.equals(selectCharacterButton)) {
