@@ -1,6 +1,7 @@
 package com.zetcode;
 
 import java.awt.event.*;
+import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
@@ -12,8 +13,7 @@ public class LevelSelectPanel extends JPanel {
 	private JButton backSpaceButton = new JButton("<-");
 	private JLabel score[] = new JLabel[6];
 	
-	private InsertQueue[] completedReplayQueue = new InsertQueue[5];
-	private InsertQueue[] failedReplayQueue = new InsertQueue[5];
+	private File file;
 	
 	
 	private GameStart frame;
@@ -44,15 +44,6 @@ public class LevelSelectPanel extends JPanel {
 		//backSpaceButton.setBounds(25, 20, 45, 20); // 뒤로가기 버튼 위치, 크기 조정
 	}
 	
-	public void setCompletedReplayQueue(InsertQueue completedReplayQueue, int i) {
-		this.completedReplayQueue[i] = completedReplayQueue;
-		System.out.println(i);
-	}
-	
-	public void setFailedReplayQueue(InsertQueue failedReplayQueue, int i) {
-		this.failedReplayQueue[i] = failedReplayQueue;
-	}
-	
 	public void setScore(int levelSelected, int score) {
 		this.score[levelSelected].setText(Integer.toString(score));
 	}
@@ -67,20 +58,28 @@ public class LevelSelectPanel extends JPanel {
 			
 			if(b.equals(completedReplayButton)) {
 				
-				if(completedReplayQueue != null) {
-					Board board = new Board(levelSelected, panel, frame, completedReplayQueue[levelSelected]);
+				String s = "Completed";
+				String filePath = "C:\\Rocket Dock\\Studying\\java\\git\\Sokoban\\Java-Sokoban-Game-master\\src\\replay\\"+s+"_replay_"+levelSelected+".txt";
+				file = new File(filePath);
+				
+				if(file.exists()) {
+					Board board = new Board(levelSelected, panel, frame, file);
 					width = board.getBoardWidth();
 					height = board.getBoardHeight();
 					frame.changePanel(board, width, height);
-					}
+				}
 				else
 					System.out.println("true");
 			}
 			
 			if(b.equals(failedReplayButton)) {
 				System.out.println("failedReplayButton");
-				if(failedReplayQueue != null) {
-					Board board = new Board(levelSelected, panel, frame, failedReplayQueue[levelSelected]);
+				String s = "Failed";
+				String filePath = "C:\\Rocket Dock\\Studying\\java\\git\\Sokoban\\Java-Sokoban-Game-master\\src\\replay\\"+s+"_replay_"+levelSelected+".txt";
+				file = new File(filePath);
+				
+				if(file.exists()) {
+					Board board = new Board(levelSelected, panel, frame, file);
 					width = board.getBoardWidth();
 					height = board.getBoardHeight();
 					frame.changePanel(board, width, height);
