@@ -10,7 +10,7 @@ public class FileIO {
 	public void FileInput(int levelSelected, String s) {
 		FileWriter fw = null;
 		
-		filePath = "C:\\Rocket Dock\\Studying\\java\\git\\Sokoban\\Java-Sokoban-Game-master\\src\\replay\\"+s+"_replay_"+levelSelected+".txt";
+		filePath = "src/replay/"+s+"_replay_"+levelSelected+".txt";
 		
 		File file = new File(filePath);
 		

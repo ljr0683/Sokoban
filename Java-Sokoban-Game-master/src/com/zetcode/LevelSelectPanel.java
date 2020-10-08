@@ -59,7 +59,7 @@ public class LevelSelectPanel extends JPanel {
 			if(b.equals(completedReplayButton)) {
 				
 				String s = "Completed";
-				String filePath = "C:\\Rocket Dock\\Studying\\java\\git\\Sokoban\\Java-Sokoban-Game-master\\src\\replay\\"+s+"_replay_"+levelSelected+".txt";
+				String filePath = "src/replay/"+s+"_replay_"+levelSelected+".txt";
 				file = new File(filePath);
 				
 				if(file.exists()) {
@@ -75,7 +75,7 @@ public class LevelSelectPanel extends JPanel {
 			if(b.equals(failedReplayButton)) {
 				System.out.println("failedReplayButton");
 				String s = "Failed";
-				String filePath = "C:\\Rocket Dock\\Studying\\java\\git\\Sokoban\\Java-Sokoban-Game-master\\src\\replay\\"+s+"_replay_"+levelSelected+".txt";
+				String filePath = "src/replay/"+s+"_replay_"+levelSelected+".txt";
 				file = new File(filePath);
 				
 				if(file.exists()) {
