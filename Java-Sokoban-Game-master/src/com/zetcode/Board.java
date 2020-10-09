@@ -5,120 +5,119 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 
-
 import javax.swing.*;
 
 public class Board extends JPanel {
-	
+
 	private Deque<Integer> replay_Deque = new LinkedList<>();
 	private Stack<Integer> replay_Stack = new Stack<>();
 	private Stack<Integer> test_Stack = new Stack<>();
-	
+
 	private JButton backSpaceButton = new JButton("<-");
 	private GameStart frame;
 	private LevelSelectPanel previousPanel;
-	private Baggage bags=null;
-	private boolean isReplay=false;
+	private Baggage bags = null;
+	private boolean isReplay = false;
 	private int size;
 	private File file;
 	private boolean isCollision = false;
 	private int levelSelected;
-    private int backCounter = 0;
+	private int backCounter = 0;
+	private boolean flag = false; // 밀면서 갔는지 확인하는 함수
 
-    private final int OFFSET = 30;
-    private final int SPACE = 20;
-    private final int LEFT_COLLISION = 1;
-    private final int RIGHT_COLLISION = 2;
-    private final int TOP_COLLISION = 3;
-    private final int BOTTOM_COLLISION = 4;
-    
-    
-    private ArrayList<Wall> walls;
-    private ArrayList<Baggage> baggs;
-    private ArrayList<Area> areas;
-    
-    private Player soko;
-    private int w = 0;
-    private int h = 0;
-    
-    private boolean isCompleted = false;
-    private boolean isFailed = false;
+	private final int OFFSET = 30;
+	private final int SPACE = 20;
+	private final int LEFT_COLLISION = 1;
+	private final int RIGHT_COLLISION = 2;
+	private final int TOP_COLLISION = 3;
+	private final int BOTTOM_COLLISION = 4;
 
-    private String level[] ={
-              "    ######\n"
-            + "    ##   #\n"
-            + "    ##   #\n"
-            + "  ####   ##\n"
-            + "  ##      #\n"
-            + "#### # ## #   ######\n"
-            + "##   # ## #####    #\n"
-            + "## $              .#\n"
-            + "###### ### #@##    #\n"
-            + "    ##     #########\n"
-            + "    ########\n",
-            
-        		"    ######\n"
-            + "############\n"
-            + "#    #     ###\n"
-            + "#    #       #\n"
-            + "#.   # ####  #\n"
-            + "# $    @ ##  #\n"
-            + "#    # #    ##\n"
-            + "###### ##    #\n"
-            + "  #          #\n"
-            + "  #    #     #\n"
-            + "  ############\n",
-            
-        	  "        ######## \n"
-            + "        #     @# \n"
-            + "        # $#$ ## \n"
-            + "        # $  $# \n"
-            + "        ##$ $ # \n"
-            + "######### $ # ###\n"
-            + "#....  ## $  $  #\n"
-            + "##...    $  $   #\n"
-            + "#....  ##########\n"
-            + "########         \n", 
-            
-              "              ########\n"
-            + "              #  ....#\n"
-            + "   ############  ....#\n"
-            + "   #    #  $ $   ....#\n"
-            + "   # $$$#$  $ #  ....#\n"
-            + "   #  $     $ #  ....#\n"
-            + "   # $$ #$ $ $########\n"
-            + "####  $ #     #       \n"
-            + "#   # #########       \n"
-            + "#    $  ##            \n"
-            + "# $$#$$ @#            \n"
-            + "#   #   ##            \n"
-            + "#########             \n",
-            
-              "        #####    \n"
-            + "        #   #####\n"
-            + "        # #$##  #\n"
-            + "        #     $ #\n"
-            + "######### ###   #\n"
-            + "#....  ## $  $###\n"
-            + "#....    $ $$ ## \n"
-            + "#....  ##$  $ @# \n"
-            + "#########  $  ## \n"
-            + "        # $ $  # \n"
-            + "        ### ## # \n"
-            + "          #    # \n"
-            + "          ###### \n",
-            
-              "#################\n"
-            + "#               #\n"
-            + "#        #      #\n"
-            + "#          $@   #\n"
-            + "#      #        #\n"
-            + "#         .     #\n"
-            + "#               #\n"
-            + "#               #\n"
-            + "#################\n"
-   
-            };
+	private ArrayList<Wall> walls;
+	private ArrayList<Baggage> baggs;
+	private ArrayList<Area> areas;
+
+	private Player soko;
+	private int w = 0;
+	private int h = 0;
+
+	private boolean isCompleted = false;
+	private boolean isFailed = false;
+
+	private String level[] ={
+			"    ######\n"
+		  + "    ##   #\n"
+		  + "    ##$  #\n"
+		  + "  ####  $##\n"
+		  + "  ##  $ $ #\n"
+		  + "#### # ## #   ######\n"
+		  + "##   # ## #####  ..#\n"
+		  + "## $  $          ..#\n"
+		  + "###### ### #@##  ..#\n"
+		  + "    ##     #########\n"
+		  + "    ########\n",
+          
+      		"    ######\n"
+          + "############\n"
+          + "#    #     ###\n"
+          + "#    #       #\n"
+          + "#.   # ####  #\n"
+          + "# $    @ ##  #\n"
+          + "#    # #    ##\n"
+          + "###### ##    #\n"
+          + "  #          #\n"
+          + "  #    #     #\n"
+          + "  ############\n",
+          
+      	  "        ######## \n"
+          + "        #     @# \n"
+          + "        # $#$ ## \n"
+          + "        # $  $# \n"
+          + "        ##$ $ # \n"
+          + "######### $ # ###\n"
+          + "#....  ## $  $  #\n"
+          + "##...    $  $   #\n"
+          + "#....  ##########\n"
+          + "########         \n", 
+          
+            "              ########\n"
+          + "              #  ....#\n"
+          + "   ############  ....#\n"
+          + "   #    #  $ $   ....#\n"
+          + "   # $$$#$  $ #  ....#\n"
+          + "   #  $     $ #  ....#\n"
+          + "   # $$ #$ $ $########\n"
+          + "####  $ #     #       \n"
+          + "#   # #########       \n"
+          + "#    $  ##            \n"
+          + "# $$#$$ @#            \n"
+          + "#   #   ##            \n"
+          + "#########             \n",
+          
+            "        #####    \n"
+          + "        #   #####\n"
+          + "        # #$##  #\n"
+          + "        #     $ #\n"
+          + "######### ###   #\n"
+          + "#....  ## $  $###\n"
+          + "#....    $ $$ ## \n"
+          + "#....  ##$  $ @# \n"
+          + "#########  $  ## \n"
+          + "        # $ $  # \n"
+          + "        ### ## # \n"
+          + "          #    # \n"
+          + "          ###### \n",
+          
+            "#################\n"
+          + "#               #\n"
+          + "#        #      #\n"
+          + "#          $@   #\n"
+          + "#      #        #\n"
+          + "#         .     #\n"
+          + "#               #\n"
+          + "#               #\n"
+          + "#################\n"
+ 
+          };
 
 	public Board(int levelSelected, LevelSelectPanel previousPanel, GameStart frame) {
 
@@ -143,7 +142,6 @@ public class Board extends JPanel {
 			}
 		}); // 뒤로가기 버튼에 액션리스너 등록
 		backSpaceButton.setBounds(25, 20, 45, 20);
-		System.out.print("[");
 		initBoard();
 	}
 
@@ -179,13 +177,13 @@ public class Board extends JPanel {
 			while ((c = fr.read()) != -1) {
 				replay_Deque.offer(c - 48);
 			}
+			fr.close();
 		} catch (IOException e) {
 			System.out.println("오류");
 		}
 
+
 		isReplay = true;
-		System.out.println();
-		System.out.println(replay_Deque);
 		initBoard();
 
 	}
@@ -332,13 +330,11 @@ public class Board extends JPanel {
 
 			if (isReplay != true) {
 				int key = e.getKeyCode();
+				flag=false;
 
 				switch (key) {
 
 				case KeyEvent.VK_LEFT:
-					System.out.print("1" + ", ");
-
-					replay_Deque.offer(LEFT_COLLISION);
 
 					if (checkWallCollision(soko, LEFT_COLLISION)) { // soko객체 왼쪽에 벽이 있다면 움직이지 않고 키 이벤트를 끝냄
 						return;
@@ -351,6 +347,21 @@ public class Board extends JPanel {
 					}
 
 					soko.move(-SPACE, 0); // 만약 위 상황을 만족하지 않는다면 왼쪽으로 한칸 움직임.
+
+					if (flag) {
+						if (!isCollision) {
+							replay_Deque.offer(5);
+						}
+						isCollision = true;
+					} else {
+						if (isCollision) {
+							replay_Deque.offer(6);
+						}
+
+						isCollision = false;
+					}
+
+					replay_Deque.offer(LEFT_COLLISION);
 
 					if (bags != null) {
 						isEntered(bags);
@@ -366,9 +377,6 @@ public class Board extends JPanel {
 					break;
 
 				case KeyEvent.VK_RIGHT:
-					System.out.print("2" + ", ");
-
-					replay_Deque.offer(RIGHT_COLLISION);
 
 					if (checkWallCollision(soko, RIGHT_COLLISION)) {
 						return;
@@ -379,6 +387,21 @@ public class Board extends JPanel {
 					}
 
 					soko.move(SPACE, 0);
+
+					if (flag) {
+						if (!isCollision) {
+							replay_Deque.offer(5);
+						}
+						isCollision = true;
+					} else {
+						if (isCollision) {
+							replay_Deque.offer(6);
+						}
+
+						isCollision = false;
+					}
+
+					replay_Deque.offer(RIGHT_COLLISION);
 
 					if (bags != null) {
 						isEntered(bags);
@@ -394,9 +417,6 @@ public class Board extends JPanel {
 					break;
 
 				case KeyEvent.VK_UP:
-					System.out.print("3" + ", ");
-
-					replay_Deque.offer(TOP_COLLISION);
 
 					if (checkWallCollision(soko, TOP_COLLISION)) {
 						return;
@@ -407,6 +427,21 @@ public class Board extends JPanel {
 					}
 
 					soko.move(0, -SPACE);
+
+					if (flag) {
+						if (!isCollision) {
+							replay_Deque.offer(5);
+						}
+						isCollision = true;
+					} else {
+						if (isCollision) {
+							replay_Deque.offer(6);
+						}
+
+						isCollision = false;
+					}
+
+					replay_Deque.offer(TOP_COLLISION);
 
 					if (bags != null) {
 						isEntered(bags);
@@ -422,9 +457,7 @@ public class Board extends JPanel {
 					break;
 
 				case KeyEvent.VK_DOWN:
-					System.out.print("4" + ", ");
 
-					replay_Deque.offer(BOTTOM_COLLISION);
 
 					if (checkWallCollision(soko, BOTTOM_COLLISION)) {
 						return;
@@ -435,6 +468,21 @@ public class Board extends JPanel {
 					}
 
 					soko.move(0, SPACE);
+
+					if (flag) {
+						if (!isCollision) {
+							replay_Deque.offer(5);
+						}
+						isCollision = true;
+					} else {
+						if (isCollision) {
+							replay_Deque.offer(6);
+						}
+
+						isCollision = false;
+					}
+
+					replay_Deque.offer(BOTTOM_COLLISION);
 
 					if (bags != null) {
 						isEntered(bags);
@@ -459,6 +507,7 @@ public class Board extends JPanel {
 					break;
 				}
 
+				isCompleted();
 				repaint();
 			} else {
 				size = replay_Deque.size();
@@ -468,20 +517,20 @@ public class Board extends JPanel {
 				switch (key1) { // 꼬임 내일 판별해야됨ㄴ!@#!@$!@$%#!#$%
 
 				case KeyEvent.VK_LEFT:
-					int key3 = replay_Stack.pop();
-					if(!replay_Stack.isEmpty()) {
+					int key3 = 0 ;
+					if (!replay_Stack.isEmpty()) {
+						key3 = replay_Stack.pop();
 						backCounter++;
-					}
-					
-					System.out.print("backCounter : "+ backCounter);
-					System.out.print(" replay_Stack : "+replay_Stack);
-					System.out.print(" test_Stack : "+test_Stack);
-					System.out.print(", key3: "+key3 );
-					System.out.println();
+					} 
 
 					switch (key3) {
 					case LEFT_COLLISION:
 						if (isCollision) {
+							for(int i=0; i<baggs.size(); i++) {
+								Baggage collisionBag = baggs.get(i);
+								if(soko.isLeftCollision(collisionBag))
+									bags = collisionBag;
+							}
 							bags.move(SPACE, 0);
 						}
 
@@ -491,6 +540,12 @@ public class Board extends JPanel {
 						break;
 					case RIGHT_COLLISION:
 						if (isCollision) {
+							for(int i=0; i<baggs.size(); i++) {
+								Baggage collisionBag = baggs.get(i);
+								if(soko.isRightCollision(collisionBag))
+									bags = collisionBag;
+							}
+							
 							bags.move(-SPACE, 0);
 						}
 
@@ -501,6 +556,11 @@ public class Board extends JPanel {
 
 					case TOP_COLLISION:
 						if (isCollision) {
+							for(int i=0; i<baggs.size(); i++) {
+								Baggage collisionBag = baggs.get(i);
+								if(soko.isTopCollision(collisionBag))
+									bags = collisionBag;
+							}
 							bags.move(0, SPACE);
 						}
 
@@ -511,6 +571,11 @@ public class Board extends JPanel {
 
 					case BOTTOM_COLLISION:
 						if (isCollision) {
+							for(int i=0; i<baggs.size(); i++) {
+								Baggage collisionBag = baggs.get(i);
+								if(soko.isBottomCollision(collisionBag))
+									bags = collisionBag;
+							}
 							bags.move(0, -SPACE);
 						}
 
@@ -521,55 +586,31 @@ public class Board extends JPanel {
 
 					case 5:
 						isCollision = false;
-						int key4 = replay_Deque.peekLast();
-						replay_Deque.offerFirst(key4);
 						replay_Deque.offerFirst(key3);
 
-						switch (key4) {
-						case LEFT_COLLISION:
-							bags.move(SPACE, 0);
+						break;
 
-							break;
-
-						case RIGHT_COLLISION:
-							bags.move(-SPACE, 0);
-
-							break;
-
-						case TOP_COLLISION:
-							bags.move(0, SPACE);
-
-							break;
-
-						case BOTTOM_COLLISION:
-							bags.move(0, -SPACE);
-
-							break;
-
-						}
+					case 6:
+						isCollision = true;
+						replay_Deque.offerFirst(key3);
+						
 						break;
 
 					}
-
 					break;
 
 				case KeyEvent.VK_RIGHT:
-					//					System.out.println("오른쪽 키 눌림");
+
 					int key2 = replay_Deque.poll();
-					
+
 					replay_Stack.push(key2);
-					if(backCounter > 0) {
-						backCounter --;
-					}
-					else {
+					if (backCounter > 0) {
+						backCounter--;
+					} else {
 						replay_Deque.offer(key2);
 						test_Stack.add(key2);
 					}
-					System.out.print("backCounter : "+ backCounter);
-					System.out.print(" replay_Stack : "+replay_Stack);
-					System.out.print(", key2 : "+key2 + " ");
-					System.out.print(" test_Stack : "+test_Stack);
-					System.out.println();
+					
 					switch (key2) {
 
 					case LEFT_COLLISION:
@@ -600,7 +641,6 @@ public class Board extends JPanel {
 						break;
 
 					case RIGHT_COLLISION:
-						//						System.out.println("RIGHT_COLLISION");
 
 						if (checkWallCollision(soko, RIGHT_COLLISION)) {
 							return;
@@ -626,7 +666,6 @@ public class Board extends JPanel {
 						break;
 
 					case TOP_COLLISION:
-						//						System.out.println("TOP_COLLISION");
 
 						if (checkWallCollision(soko, TOP_COLLISION)) {
 							return;
@@ -652,7 +691,6 @@ public class Board extends JPanel {
 						break;
 
 					case BOTTOM_COLLISION:
-						//						System.out.println("BOTTOM_COLLISION");
 						if (checkWallCollision(soko, BOTTOM_COLLISION)) {
 							return;
 						}
@@ -675,7 +713,15 @@ public class Board extends JPanel {
 						}
 
 						break;
-
+						
+					case 5:
+						isCollision = true;
+						break;
+						
+					case 6:
+						isCollision = false;
+						break;
+						
 					default:
 						break;
 					}
@@ -685,7 +731,7 @@ public class Board extends JPanel {
 				default:
 					break;
 				}
-
+				isCompleted();
 				repaint();
 			}
 		}
@@ -787,14 +833,12 @@ public class Board extends JPanel {
 					}
 					// 위의 if문을 다 만족하지 않으면 그제서야 bag객체가 움직임.
 					bag.move(-SPACE, 0);
-					if (!isCollision) {
-						isCollision = true;
-						replay_Deque.offer(5);
-					}
+					flag = true;
 					this.bags = bag;
-					isCompleted(); // bag객체가 움직인 후 게임이 끝났는지 검사함.
+					// bag객체가 움직인 후 게임이 끝났는지 검사함.
 
 				}
+
 			}
 
 			return false;
@@ -824,14 +868,13 @@ public class Board extends JPanel {
 					}
 					// 위의 if문을 다 만족하지 않으면 그제서야 bag 객체가 움직임.
 					bag.move(SPACE, 0);
-					if (!isCollision) {
-						isCollision = true;
-						replay_Deque.offer(5);
-					}
+					flag = true;
 					this.bags = bag;
-					isCompleted(); // bag객체가 움직인 후 게임이 끝났는지 검사함.
+					// bag객체가 움직인 후 게임이 끝났는지 검사함.
 				}
+
 			}
+
 			return false;
 
 		case TOP_COLLISION:
@@ -859,13 +902,11 @@ public class Board extends JPanel {
 					}
 
 					bag.move(0, -SPACE);
-					if (!isCollision) {
-						isCollision = true;
-						replay_Deque.offer(5);
-					}
+					flag = true;
 					this.bags = bag;
-					isCompleted();
+
 				}
+
 			}
 
 			return false;
@@ -896,13 +937,11 @@ public class Board extends JPanel {
 					}
 
 					bag.move(0, SPACE);
-					if (!isCollision) {
-						isCollision = true;
-						replay_Deque.offer(5);
-					}
+					flag = true;
 					this.bags = bag;
-					isCompleted();
+
 				}
+
 			}
 
 			break;
@@ -930,7 +969,8 @@ public class Board extends JPanel {
 
 								for (int k = 0; k < baggs.size(); k++) {
 									Baggage item3 = baggs.get(k);
-									if (!item3.equals(bag) && item2.isBottomCollision(item3) || item2.isTopCollision(item3)) { // item3는 item2 아래의 bag
+									if (!item3.equals(bag) && item2.isBottomCollision(item3)
+											|| item2.isTopCollision(item3)) { // item3는 item2 아래의 bag
 
 										return true;
 									}
@@ -959,7 +999,8 @@ public class Board extends JPanel {
 							if (!item2.equals(item1) && item1.isTopCollision(item2) || item1.isBottomCollision(item2)) {
 								for (int k = 0; k < baggs.size(); k++) {
 									Baggage item3 = baggs.get(k);
-									if (!item3.equals(bag) && item2.isRightCollision(item3) || item2.isLeftCollision(item3)) {
+									if (!item3.equals(bag) && item2.isRightCollision(item3)
+											|| item2.isLeftCollision(item3)) {
 										return true;
 									}
 								}
@@ -985,10 +1026,12 @@ public class Board extends JPanel {
 										if (item2.isLeftCollision(item3) || item2.isRightCollision(item3))
 											return true;
 
-										if (bag.isTopCollision(item2) && item1.isBottomCollision(item3) || bag.isBottomCollision(item2) && item1.isTopCollision(item3)) {
+										if (bag.isTopCollision(item2) && item1.isBottomCollision(item3)
+												|| bag.isBottomCollision(item2) && item1.isTopCollision(item3)) {
 											for (int h = 0; h < walls.size(); h++) {
 												Wall item4 = walls.get(h);
-												if (!item4.equals(item2) && item3.isRightCollision(item4) || item3.isLeftCollision(item4)) {
+												if (!item4.equals(item2) && item3.isRightCollision(item4)
+														|| item3.isLeftCollision(item4)) {
 													return true;
 												}
 											}
@@ -1018,10 +1061,12 @@ public class Board extends JPanel {
 										if (item2.isTopCollision(item3) || item2.isRightCollision(item3))
 											return true;
 
-										if (bag.isRightCollision(item2) && item1.isLeftCollision(item3) || bag.isLeftCollision(item2) && item1.isRightCollision(item3)) {
+										if (bag.isRightCollision(item2) && item1.isLeftCollision(item3)
+												|| bag.isLeftCollision(item2) && item1.isRightCollision(item3)) {
 											for (int h = 0; h < walls.size(); h++) {
 												Wall item4 = walls.get(h);
-												if (!item4.equals(item2) && item3.isTopCollision(item4) || item3.isBottomCollision(item4)) {
+												if (!item4.equals(item2) && item3.isTopCollision(item4)
+														|| item3.isBottomCollision(item4)) {
 													return true;
 												}
 											}
@@ -1032,7 +1077,7 @@ public class Board extends JPanel {
 						}
 					}
 				}
-			} //
+			}
 
 			for (int i = 0; i < baggs.size(); i++) { // 4개다 bag일때 수정한거임
 				Baggage item1 = baggs.get(i);
@@ -1064,7 +1109,7 @@ public class Board extends JPanel {
 						}
 					}
 				}
-			} //
+			}
 
 		}
 
@@ -1093,18 +1138,17 @@ public class Board extends JPanel {
 		}
 
 		if (finishedBags == nOfBags) { // finishedBag과 nOfbags가 같으면 모두 최종지점에 넣었다는 뜻
-			resultQueue();
 			String s = "Completed";
 
 			FileIO fileio = new FileIO();
 			int size = replay_Deque.size();
-
+			System.out.println(replay_Deque);
 			for (int i = 0; i < size; i++) {
 				fileio.enqueue(replay_Deque.poll());
 			}
-
+			
 			fileio.FileInput(levelSelected, s);
-
+			
 			isCompleted = true; // 따라서 끝남
 			repaint(); // 컴포넌트의 모양 색상등이 바뀌었을때 사용
 		}
@@ -1153,11 +1197,6 @@ public class Board extends JPanel {
 			isFailed = false;
 		}
 
-	}
-
-	private void resultQueue() {
-		System.out.println();
-		System.out.println(replay_Deque);
 	}
 
 }
