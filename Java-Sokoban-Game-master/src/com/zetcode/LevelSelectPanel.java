@@ -63,13 +63,9 @@ public class LevelSelectPanel extends JPanel {
 				file = new File(filePath);
 				
 				if(file.exists()) {
-					Board board = new Board(levelSelected, panel, frame, file);
-					width = board.getBoardWidth();
-					height = board.getBoardHeight();
-					frame.changePanel(board, width, height);
+					Replay replay = new Replay(levelSelected, panel, frame, file);
 				}
-				else
-					System.out.println("true");
+				
 			}
 			
 			if(b.equals(failedReplayButton)) {
@@ -79,10 +75,7 @@ public class LevelSelectPanel extends JPanel {
 				file = new File(filePath);
 				
 				if(file.exists()) {
-					Board board = new Board(levelSelected, panel, frame, file);
-					width = board.getBoardWidth();
-					height = board.getBoardHeight();
-					frame.changePanel(board, width, height);
+					Replay replay = new Replay(levelSelected, panel, frame, file);
 				}
 			}
 			

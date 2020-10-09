@@ -24,13 +24,14 @@ public class Board extends JPanel {
 	private int levelSelected;
 	private int backCounter = 0;
 	private boolean flag = false; // 밀면서 갔는지 확인하는 함수
+	private Replay replay;
 
 	private final int OFFSET = 30;
-	private final int SPACE = 20;
-	private final int LEFT_COLLISION = 1;
-	private final int RIGHT_COLLISION = 2;
-	private final int TOP_COLLISION = 3;
-	private final int BOTTOM_COLLISION = 4;
+	public static int SPACE = 20;
+	public static final int LEFT_COLLISION = 1;
+	public static final int RIGHT_COLLISION = 2;
+	public static final int TOP_COLLISION = 3;
+	public static final int BOTTOM_COLLISION = 4;
 
 	private ArrayList<Wall> walls;
 	private ArrayList<Baggage> baggs;
@@ -145,7 +146,7 @@ public class Board extends JPanel {
 		initBoard();
 	}
 
-	public Board(int levelSelected, LevelSelectPanel previousPanel, GameStart frame, File file) {
+	public Board(int levelSelected, LevelSelectPanel previousPanel, GameStart frame, File file, Replay replay) {
 
 		setLayout(null);
 
@@ -181,8 +182,9 @@ public class Board extends JPanel {
 		} catch (IOException e) {
 			System.out.println("오류");
 		}
-
-
+		
+		this.replay = replay;
+		
 		isReplay = true;
 		initBoard();
 
@@ -304,6 +306,8 @@ public class Board extends JPanel {
 			}
 
 		}
+		
+
 	}
 
 	@Override
@@ -313,7 +317,7 @@ public class Board extends JPanel {
 		buildWorld(g);
 	}
 
-	private class TAdapter extends KeyAdapter {
+	private class TAdapter extends KeyAdapter { // 키값을 클래스에 넘겨줌
 
 		@Override
 		public void keyPressed(KeyEvent e) {
@@ -510,222 +514,17 @@ public class Board extends JPanel {
 				isCompleted();
 				repaint();
 			} else {
-				size = replay_Deque.size();
 
 				int key1 = e.getKeyCode();
 
 				switch (key1) { // 꼬임 내일 판별해야됨ㄴ!@#!@$!@$%#!#$%
 
 				case KeyEvent.VK_LEFT:
-					int key3 = 0 ;
-					if (!replay_Stack.isEmpty()) {
-						key3 = replay_Stack.pop();
-						backCounter++;
-					} 
-
-					switch (key3) {
-					case LEFT_COLLISION:
-						if (isCollision) {
-							for(int i=0; i<baggs.size(); i++) {
-								Baggage collisionBag = baggs.get(i);
-								if(soko.isLeftCollision(collisionBag))
-									bags = collisionBag;
-							}
-							bags.move(SPACE, 0);
-						}
-
-						soko.move(SPACE, 0);
-
-						replay_Deque.offerFirst(key3);
-						break;
-					case RIGHT_COLLISION:
-						if (isCollision) {
-							for(int i=0; i<baggs.size(); i++) {
-								Baggage collisionBag = baggs.get(i);
-								if(soko.isRightCollision(collisionBag))
-									bags = collisionBag;
-							}
-							
-							bags.move(-SPACE, 0);
-						}
-
-						soko.move(-SPACE, 0);
-
-						replay_Deque.offerFirst(key3);
-						break;
-
-					case TOP_COLLISION:
-						if (isCollision) {
-							for(int i=0; i<baggs.size(); i++) {
-								Baggage collisionBag = baggs.get(i);
-								if(soko.isTopCollision(collisionBag))
-									bags = collisionBag;
-							}
-							bags.move(0, SPACE);
-						}
-
-						soko.move(0, SPACE);
-
-						replay_Deque.offerFirst(key3);
-						break;
-
-					case BOTTOM_COLLISION:
-						if (isCollision) {
-							for(int i=0; i<baggs.size(); i++) {
-								Baggage collisionBag = baggs.get(i);
-								if(soko.isBottomCollision(collisionBag))
-									bags = collisionBag;
-							}
-							bags.move(0, -SPACE);
-						}
-
-						soko.move(0, -SPACE);
-
-						replay_Deque.offerFirst(key3);
-						break;
-
-					case 5:
-						isCollision = false;
-						replay_Deque.offerFirst(key3);
-
-						break;
-
-					case 6:
-						isCollision = true;
-						replay_Deque.offerFirst(key3);
-						
-						break;
-
-					}
+					replay.goBack();
 					break;
 
 				case KeyEvent.VK_RIGHT:
-
-					int key2 = replay_Deque.poll();
-
-					replay_Stack.push(key2);
-					if (backCounter > 0) {
-						backCounter--;
-					} else {
-						replay_Deque.offer(key2);
-						test_Stack.add(key2);
-					}
-					
-					switch (key2) {
-
-					case LEFT_COLLISION:
-
-						if (checkWallCollision(soko, LEFT_COLLISION)) { // soko객체 왼쪽에 벽이 있다면 움직이지 않고 키 이벤트를 끝냄
-							return;
-						}
-
-						if (checkBagCollision(LEFT_COLLISION)) {
-							// 왼쪽으로 움직였을때, soko객체 왼쪽에 bag객체가 존재하고 또 왼쪽에 또다른 Bag 객체가 존재하거나,
-							// soko 객체 왼쪽 Bag 객체의 왼쪽에 Wall 객체가 존재하면 움직이지 않고 이벤트 종료
-							return;
-						}
-
-						soko.move(-SPACE, 0); // 만약 위 상황을 만족하지 않는다면 왼쪽으로 한칸 움직임.
-
-						if (bags != null) {
-							isEntered(bags);
-							if (bags.getIsEntered()) {
-								break;
-							}
-						}
-
-						if (isFailedDetected(bags)) {
-							isFailed();
-						}
-
-						break;
-
-					case RIGHT_COLLISION:
-
-						if (checkWallCollision(soko, RIGHT_COLLISION)) {
-							return;
-						}
-
-						if (checkBagCollision(RIGHT_COLLISION)) {
-							return;
-						}
-
-						soko.move(SPACE, 0);
-
-						if (bags != null) {
-							isEntered(bags);
-							if (bags.getIsEntered()) {
-								break;
-							}
-						}
-
-						if (isFailedDetected(bags)) {
-							isFailed();
-						}
-
-						break;
-
-					case TOP_COLLISION:
-
-						if (checkWallCollision(soko, TOP_COLLISION)) {
-							return;
-						}
-
-						if (checkBagCollision(TOP_COLLISION)) {
-							return;
-						}
-
-						soko.move(0, -SPACE);
-
-						if (bags != null) {
-							isEntered(bags);
-							if (bags.getIsEntered()) {
-								break;
-							}
-						}
-
-						if (isFailedDetected(bags)) {
-							isFailed();
-						}
-
-						break;
-
-					case BOTTOM_COLLISION:
-						if (checkWallCollision(soko, BOTTOM_COLLISION)) {
-							return;
-						}
-
-						if (checkBagCollision(BOTTOM_COLLISION)) {
-							return;
-						}
-
-						soko.move(0, SPACE);
-
-						if (bags != null) {
-							isEntered(bags);
-							if (bags.getIsEntered()) {
-								break;
-							}
-						}
-
-						if (isFailedDetected(bags)) {
-							isFailed();
-						}
-
-						break;
-						
-					case 5:
-						isCollision = true;
-						break;
-						
-					case 6:
-						isCollision = false;
-						break;
-						
-					default:
-						break;
-					}
-
+					replay.goAhead();
 					break;
 
 				default:
@@ -1198,5 +997,60 @@ public class Board extends JPanel {
 		}
 
 	}
+	
+	public boolean getCheckWallCollision(Actor actor, int type) {
+		if(checkWallCollision(actor, type))
+			return true;
+		return false;
+	}
+	
+	public boolean getCheckBagCollision(int type) {
+		if(checkBagCollision(type))
+			return true;
+		return false;
+	}
+	
+	public boolean getIsCollision() {
+		return isCollision;
+	}
+	
+	public void setIsCollision(boolean TorF) {
+		isCollision = TorF;
+	}
 
+	public boolean getFlag() {
+		return flag;
+	}
+	
+	public Baggage getBaggs(int i) {
+		return baggs.get(i);
+	}
+	
+	public Baggage getBags() {
+		return bags;
+	}
+	
+	public void setBags(Baggage collisionBag) {
+		bags = collisionBag;
+	}
+	
+	public Player getSoko() {
+		return soko;
+	}
+	
+	public void callIsEntered(Baggage bags) {
+		isEntered(bags);
+	}
+	
+	public void callIsFailed() {
+		isFailed();
+	}
+	
+	public boolean callIsFailedDetected(Baggage bags) {
+		return isFailedDetected(bags);
+	}
+	
+	public int getBaggsSize() {
+		return baggs.size();
+	}
 }
