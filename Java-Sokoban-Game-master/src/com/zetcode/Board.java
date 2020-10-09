@@ -1142,7 +1142,7 @@ public class Board extends JPanel {
 
 			FileIO fileio = new FileIO();
 			int size = replay_Deque.size();
-			System.out.println(replay_Deque);
+			
 			for (int i = 0; i < size; i++) {
 				fileio.enqueue(replay_Deque.poll());
 			}

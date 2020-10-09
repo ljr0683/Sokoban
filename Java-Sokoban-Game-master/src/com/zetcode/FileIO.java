@@ -10,11 +10,15 @@ public class FileIO {
 	public void FileInput(int levelSelected, String s) {
 		FileWriter fw = null;
 		
-		filePath = "C:\\Rocket Dock\\Studying\\java\\git\\Sokoban\\Java-Sokoban-Game-master\\src\\replay\\"+s+"_replay_"+levelSelected+".txt";
+		filePath = "src\\replay\\"+s+"_replay_"+levelSelected+".txt";
+		String folderPath = "src\\replay";
 		
+		File folder = new File(folderPath);
 		File file = new File(filePath);
 		
 		try {
+			if(!folder.exists())
+				folder.mkdir();
 			fw = new FileWriter(filePath,false);
 			int size = replay_Queue.size();
 			for(int j=0; j<size; j++) {
