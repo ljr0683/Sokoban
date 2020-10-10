@@ -19,7 +19,7 @@ public class FileIO {
 		try {
 			if(!folder.exists())
 				folder.mkdir();
-			fw = new FileWriter(filePath,false);
+			fw = new FileWriter(file,false);
 			int size = replay_Queue.size();
 			for(int j=0; j<size; j++) {
 				fw.write(Integer.toString(replay_Queue.poll()));

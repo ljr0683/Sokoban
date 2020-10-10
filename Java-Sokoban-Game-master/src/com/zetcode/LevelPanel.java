@@ -8,7 +8,7 @@ public class LevelPanel extends JPanel {
 
 	private JButton[] levelButton = new JButton[6]; // 버튼 5개 선언
 
-	private GameStart frame; // GameStart 클래스의 change 메소드를 사용하기 위해 선언
+	private UIManager frame; // GameStart 클래스의 change 메소드를 사용하기 위해 선언
 	private MainPanel previousPanel; // 뒤로가기 버튼을 위해 선언(전 패널 객체를 얻기 위해)
 	private JButton backSpaceButton = new JButton("<-"); // 뒤로가기 버튼
 	private LevelPanel panel; //board에서 뒤로가기 위한 패널 파라미터로 넘겨주는 패널
@@ -16,7 +16,7 @@ public class LevelPanel extends JPanel {
 	private Score Score;
 
 
-	public LevelPanel(GameStart frame, MainPanel previousPanel) { //생성자
+	public LevelPanel(UIManager frame, MainPanel previousPanel) { //생성자
 		setLayout(null); // 레이아웃을 설정 x 내 마음대로 배치 가능
 		this.frame = frame; // GameStart 객체를 받아옴 change 메소드를 사용하기 위함
 		this.previousPanel = previousPanel; // 뒤로가기를 위함

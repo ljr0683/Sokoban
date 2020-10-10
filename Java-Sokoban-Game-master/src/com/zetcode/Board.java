@@ -10,11 +10,9 @@ import javax.swing.*;
 public class Board extends JPanel {
 
 	private Deque<Integer> replay_Deque = new LinkedList<>();
-	private Stack<Integer> replay_Stack = new Stack<>();
-	private Stack<Integer> test_Stack = new Stack<>();
 
 	private JButton backSpaceButton = new JButton("<-");
-	private GameStart frame;
+	private UIManager frame;
 	private LevelSelectPanel previousPanel;
 	private Baggage bags = null;
 	private boolean isReplay = false;
@@ -22,7 +20,6 @@ public class Board extends JPanel {
 	private File file;
 	private boolean isCollision = false;
 	private int levelSelected;
-	private int backCounter = 0;
 	private boolean flag = false; // 밀면서 갔는지 확인하는 함수
 	private Replay replay;
 
@@ -69,7 +66,7 @@ public class Board extends JPanel {
           + "  #    #     #\n"
           + "  ############\n",
           
-      	  "        ######## \n"
+      	    "        ######## \n"
           + "        #     @# \n"
           + "        # $#$ ## \n"
           + "        # $  $# \n"
@@ -120,7 +117,7 @@ public class Board extends JPanel {
  
           };
 
-	public Board(int levelSelected, LevelSelectPanel previousPanel, GameStart frame) {
+	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame) {
 
 		setLayout(null);
 
@@ -146,7 +143,7 @@ public class Board extends JPanel {
 		initBoard();
 	}
 
-	public Board(int levelSelected, LevelSelectPanel previousPanel, GameStart frame, File file, Replay replay) {
+	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, Replay replay) {
 
 		setLayout(null);
 
@@ -267,6 +264,8 @@ public class Board extends JPanel {
 
 			h = y; // 높이를 정함.
 		}
+		
+
 	}
 
 	private void buildWorld(Graphics g) {
@@ -536,7 +535,7 @@ public class Board extends JPanel {
 		}
 	}
 
-	private boolean checkWallCollision(Actor actor, int type) {
+	private boolean checkWallCollision(Actor actor, int type) { //actor = bag
 
 		switch (type) { // type == 왼쪽 오른쪽 위 아래인지 숫자 1,2,3,4
 
@@ -555,7 +554,7 @@ public class Board extends JPanel {
 			return false; // actor 왼쪽에 벽이 없다면 false 리턴
 
 		case RIGHT_COLLISION:
-
+			
 			for (int i = 0; i < walls.size(); i++) {
 
 				Wall wall = walls.get(i);
@@ -998,6 +997,10 @@ public class Board extends JPanel {
 
 	}
 	
+	private void undo() {
+		
+	}
+	
 	public boolean getCheckWallCollision(Actor actor, int type) {
 		if(checkWallCollision(actor, type))
 			return true;
@@ -1031,7 +1034,9 @@ public class Board extends JPanel {
 	}
 	
 	public void setBags(Baggage collisionBag) {
-		bags = collisionBag;
+		if(collisionBag!=null) {
+			bags = collisionBag;
+		}
 	}
 	
 	public Player getSoko() {

@@ -5,14 +5,14 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-public class GameStart extends JFrame {
+public class UIManager extends JFrame {
 	private final int OFFSET = 30;
 
 	private MainPanel mainPanel = new MainPanel(this);
 
-	Container c = getContentPane();
+	private Container c = getContentPane();
 
-	public GameStart() {
+	public UIManager() {
 
 		initUI();
 	}

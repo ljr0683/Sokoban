@@ -7,11 +7,11 @@ import javax.swing.*;
 public class DrawCharacterPanel extends JPanel {
 	JLabel la = new JLabel("캐릭터 그리는 패널임");
 
-	private GameStart frame;
+	private UIManager frame;
 	private MainPanel previousPanel;
 	private JButton backSpaceButton = new JButton("<-");
 
-	public DrawCharacterPanel(GameStart frame, MainPanel previousPanel) {
+	public DrawCharacterPanel(UIManager frame, MainPanel previousPanel) {
 		setLayout(null);
 		this.frame = frame;
 		this.previousPanel = previousPanel;

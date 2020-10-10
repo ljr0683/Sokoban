@@ -9,7 +9,7 @@ public class Sokoban {
 	public static void main(String[] args) {
 
 		EventQueue.invokeLater(() -> {
-			GameStart game = new GameStart();
+			UIManager game = new UIManager();
 			game.setVisible(true);
 		});
 	}

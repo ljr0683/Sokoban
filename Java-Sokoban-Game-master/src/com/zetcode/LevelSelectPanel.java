@@ -15,14 +15,14 @@ public class LevelSelectPanel extends JPanel {
 	
 	private File file;
 	
-	private GameStart frame;
+	private UIManager frame;
 	private LevelPanel previousPanel;
 	private LevelSelectPanel panel;
 	
 	private int width, height; // 게임의 크기 설정하기 위함
 	private int levelSelected;
 	
-	public LevelSelectPanel(GameStart frame, LevelPanel previousPanel, int levelSelected) {
+	public LevelSelectPanel(UIManager frame, LevelPanel previousPanel, int levelSelected) {
 		
 		panel = this;
 		

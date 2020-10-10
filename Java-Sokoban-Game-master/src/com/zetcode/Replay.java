@@ -4,15 +4,16 @@ import java.io.*;
 import java.util.*;
 
 public class Replay {
-	private Deque<Integer> replay_Deque = new LinkedList<>();
+	private Deque<Integer> replay_Deque;
 	private Stack<Integer> replay_Stack = new Stack<>();
-	File file;
-	Board board;
+	private File file;
+	private Board board;
 	
 
 	private int backCounter = 0;
 	
-	Replay(int levelSelected, LevelSelectPanel previousPanel, GameStart frame, File file){
+	Replay(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file){
+		replay_Deque = new LinkedList<>();
 		
 		this.file = file;
 		
@@ -30,7 +31,12 @@ public class Replay {
 		createBoard(levelSelected, previousPanel, frame, file);
 	}
 	
-	private void createBoard(int levelSelected, LevelSelectPanel previousPanel, GameStart frame, File file) {
+	Replay(Board board, int key){
+		this.board=board;
+		replay_Stack.add(key);
+	}
+	
+	private void createBoard(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file) {
 		board = new Board(levelSelected, previousPanel, frame, file, this);
 		int width = board.getBoardWidth();
 		int height = board.getBoardHeight();
