@@ -4,11 +4,11 @@ import java.io.*;
 import java.util.*;
 
 public class Replay {
-	private Deque<Integer> replay_Deque;
+	private Deque<Integer> replay_Deque = new LinkedList<>();
 	private Stack<Integer> replay_Stack = new Stack<>();
 	private File file;
 	private Board board;
-	
+	private boolean undo = false;
 
 	private int backCounter = 0;
 	
@@ -31,9 +31,9 @@ public class Replay {
 		createBoard(levelSelected, previousPanel, frame, file);
 	}
 	
-	Replay(Board board, int key){
+	Replay(Board board){
 		this.board=board;
-		replay_Stack.add(key);
+		undo = true;
 	}
 	
 	private void createBoard(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file) {
@@ -43,13 +43,57 @@ public class Replay {
 		frame.changePanel(board, width, height);
 	}
 	
-	public void goBack() {
+	public void goBackGetKey() {
 		int key3 = 0 ;
-		if (!replay_Stack.isEmpty()) {
-			key3 = replay_Stack.pop();
-			backCounter++;
-		} 
-
+		 
+		if(!undo) {
+			if (!replay_Stack.isEmpty()) {
+				key3 = replay_Stack.pop();
+				backCounter++;
+			}
+		}
+		else {
+			if(!replay_Deque.isEmpty()) {
+				key3 = replay_Deque.poll();
+			}
+		}
+		if(key3 == 5 || key3 == 6) {
+			switch (key3) {
+			
+			case 5:
+				board.setIsCollision(false);
+				if(!undo) {
+					replay_Deque.offerFirst(key3);
+					key3 = replay_Stack.pop();
+				}
+				else {
+					key3 = replay_Deque.poll();
+				}
+				
+				break;
+	
+			case 6:
+				board.setIsCollision(true);
+				if(!undo) {
+					replay_Deque.offerFirst(key3);
+					key3 = replay_Stack.pop();
+				}
+				else {
+					key3 = replay_Deque.poll();
+				}
+				
+				break;
+	
+			}
+			
+			goBack(key3);
+		}
+		else {
+			goBack(key3);
+		}
+	}
+	
+	private void goBack(int key3) {
 		switch (key3) {
 		case Board.LEFT_COLLISION:
 			if (board.getIsCollision()) {
@@ -60,10 +104,10 @@ public class Replay {
 				}
 				board.getBags().move(Board.SPACE, 0);
 			}
-
 			board.getSoko().move(Board.SPACE, 0);
-
-			replay_Deque.offerFirst(key3);
+			
+			if(!undo)
+				replay_Deque.offerFirst(key3);
 			break;
 		case Board.RIGHT_COLLISION:
 			if (board.getIsCollision()) {
@@ -77,8 +121,9 @@ public class Replay {
 			}
 
 			board.getSoko().move(-Board.SPACE, 0);
-
-			replay_Deque.offerFirst(key3);
+			
+			if(!undo)
+				replay_Deque.offerFirst(key3);
 			break;
 
 		case Board.TOP_COLLISION:
@@ -92,8 +137,9 @@ public class Replay {
 			}
 
 			board.getSoko().move(0, Board.SPACE);
-
-			replay_Deque.offerFirst(key3);
+			
+			if(!undo)
+				replay_Deque.offerFirst(key3);
 			break;
 
 		case Board.BOTTOM_COLLISION:
@@ -107,26 +153,18 @@ public class Replay {
 			}
 
 			board.getSoko().move(0, -Board.SPACE);
-
-			replay_Deque.offerFirst(key3);
-			break;
-
-		case 5:
-			board.setIsCollision(false);
-			replay_Deque.offerFirst(key3);
-
-			break;
-
-		case 6:
-			board.setIsCollision(true);
-			replay_Deque.offerFirst(key3);
 			
+			if(!undo)
+				replay_Deque.offerFirst(key3);
 			break;
-
+			
+		default : 
+			break;
 		}
 	}
 	
-	public void goAhead() {
+	
+	public void goAheadGetKey() {
 		int key2 = replay_Deque.poll();
 
 		replay_Stack.push(key2);
@@ -136,6 +174,36 @@ public class Replay {
 			replay_Deque.offer(key2);
 		}
 		
+		if(key2 == 5 || key2 == 6) {
+		
+			switch (key2) {
+				
+			case 5:
+				board.setIsCollision(true);
+				key2 = replay_Deque.poll();
+				replay_Stack.push(key2);
+				replay_Deque.offer(key2);
+				break;
+				
+			case 6:
+				board.setIsCollision(false);
+				key2 = replay_Deque.poll();
+				replay_Stack.push(key2);
+				replay_Deque.offer(key2);
+				break;
+				
+			default:
+				break;
+			}
+			
+			goAhead(key2);
+		}
+		else {
+			goAhead(key2);
+		}
+	}
+	
+	public void goAhead(int key2) {
 		switch (key2) {
 
 		case Board.LEFT_COLLISION:
@@ -236,18 +304,14 @@ public class Replay {
 			}
 
 			break;
-			
-		case 5:
-			board.setIsCollision(true);
-			break;
-			
-		case 6:
-			board.setIsCollision(false);
-			break;
-			
-		default:
+		
+		default :
 			break;
 		}
+		
 	}
 	
+	public void offerReplay_Deque(int key) {
+		replay_Deque.offer(key);
+	}
 }

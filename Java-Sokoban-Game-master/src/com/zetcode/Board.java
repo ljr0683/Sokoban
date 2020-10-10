@@ -12,6 +12,8 @@ public class Board extends JPanel {
 	private Deque<Integer> replay_Deque = new LinkedList<>();
 
 	private JButton backSpaceButton = new JButton("<-");
+	private int undoCount = 3;
+	private JLabel undoCountText = new JLabel("ExtraUndo : "+Integer.toString(undoCount));
 	private UIManager frame;
 	private LevelSelectPanel previousPanel;
 	private Baggage bags = null;
@@ -126,6 +128,7 @@ public class Board extends JPanel {
 		this.frame = frame;
 
 		add(backSpaceButton);
+		add(undoCountText);
 		backSpaceButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -140,6 +143,7 @@ public class Board extends JPanel {
 			}
 		}); // 뒤로가기 버튼에 액션리스너 등록
 		backSpaceButton.setBounds(25, 20, 45, 20);
+		
 		initBoard();
 	}
 
@@ -505,6 +509,17 @@ public class Board extends JPanel {
 					restartLevel();
 
 					break;
+					
+				case KeyEvent.VK_BACK_SPACE :
+					if(!replay_Deque.isEmpty() ) {
+						if(undoCount>0) {
+							undo();
+							undoCount--;
+						}
+						
+					}
+					
+					break;
 
 				default:
 					break;
@@ -519,11 +534,11 @@ public class Board extends JPanel {
 				switch (key1) { // 꼬임 내일 판별해야됨ㄴ!@#!@$!@$%#!#$%
 
 				case KeyEvent.VK_LEFT:
-					replay.goBack();
+					replay.goBackGetKey();
 					break;
 
 				case KeyEvent.VK_RIGHT:
-					replay.goAhead();
+					replay.goAheadGetKey();
 					break;
 
 				default:
@@ -998,7 +1013,16 @@ public class Board extends JPanel {
 	}
 	
 	private void undo() {
-		
+		if(!replay_Deque.isEmpty()) {
+			int key = replay_Deque.pollLast();
+			replay = new Replay(this);
+			replay.offerReplay_Deque(key);
+			if(key == 5 || key == 6) {
+				key = replay_Deque.pollLast();
+				replay.offerReplay_Deque(key);
+			}
+			replay.goBackGetKey();
+		}
 	}
 	
 	public boolean getCheckWallCollision(Actor actor, int type) {
