@@ -24,9 +24,10 @@ public class Board extends JPanel {
 	private int levelSelected;
 	private boolean flag = false; // 밀면서 갔는지 확인하는 함수
 	private Replay replay;
+	private FailedDetected failed;
 
 	private final int OFFSET = 30;
-	public static int SPACE = 20;
+	public static int SPACE = 64;
 	public static final int LEFT_COLLISION = 1;
 	public static final int RIGHT_COLLISION = 2;
 	public static final int TOP_COLLISION = 3;
@@ -137,12 +138,12 @@ public class Board extends JPanel {
 
 				if (b.equals(backSpaceButton)) {
 					frame.changePanel(previousPanel);
-					frame.setSize(500, 300);
 				}
 
 			}
 		}); // 뒤로가기 버튼에 액션리스너 등록
 		backSpaceButton.setBounds(25, 20, 45, 20);
+		failed = new FailedDetected(this);
 		
 		initBoard();
 	}
@@ -165,7 +166,6 @@ public class Board extends JPanel {
 
 				if (b.equals(backSpaceButton)) {
 					frame.changePanel(previousPanel);
-					frame.setSize(500, 300);
 				}
 
 			}
@@ -185,6 +185,7 @@ public class Board extends JPanel {
 		}
 		
 		this.replay = replay;
+		failed = new FailedDetected(this);
 		
 		isReplay = true;
 		initBoard();
@@ -269,12 +270,11 @@ public class Board extends JPanel {
 			h = y; // 높이를 정함.
 		}
 		
-
 	}
 
 	private void buildWorld(Graphics g) {
 
-		g.setColor(new Color(250, 240, 170));
+		g.setColor(new Color(100, 240, 170));
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
 		ArrayList<Actor> world = new ArrayList<>();
@@ -288,12 +288,22 @@ public class Board extends JPanel {
 
 			Actor item = world.get(i);
 
-			if (item instanceof Player || item instanceof Baggage) {
+			if (item instanceof Area ) {
 
-				g.drawImage(item.getImage(), item.x() + 2, item.y() + 2, this);
-			} else {
+				g.drawImage(item.getImage(), item.x() + 16, item.y() + 16, this);
+			}
+			else if(item instanceof Player) {
+				g.drawImage(item.getImage(), item.x() + 13, item.y() , this);
+			}
+			else {
 
 				g.drawImage(item.getImage(), item.x(), item.y(), this);
+			}
+			
+			if(!isReplay) {
+				
+				g.setColor(new Color(0, 0, 0));
+				g.drawString("ExtraUndo : " + Integer.toString(undoCount), w-70, 18);
 			}
 
 			if (isCompleted) { // isCompleted가 true면 화면에 completed를 띄움
@@ -354,7 +364,8 @@ public class Board extends JPanel {
 					}
 
 					soko.move(-SPACE, 0); // 만약 위 상황을 만족하지 않는다면 왼쪽으로 한칸 움직임.
-
+					soko.changePlayerVector(LEFT_COLLISION);
+					
 					if (flag) {
 						if (!isCollision) {
 							replay_Deque.offer(5);
@@ -377,7 +388,7 @@ public class Board extends JPanel {
 						}
 					}
 
-					if (isFailedDetected(bags)) {
+					if (failed.isFailedDetected(bags)) {
 						isFailed();
 					}
 
@@ -394,6 +405,7 @@ public class Board extends JPanel {
 					}
 
 					soko.move(SPACE, 0);
+					soko.changePlayerVector(RIGHT_COLLISION);
 
 					if (flag) {
 						if (!isCollision) {
@@ -417,7 +429,7 @@ public class Board extends JPanel {
 						}
 					}
 
-					if (isFailedDetected(bags)) {
+					if (failed.isFailedDetected(bags)) {
 						isFailed();
 					}
 
@@ -434,6 +446,7 @@ public class Board extends JPanel {
 					}
 
 					soko.move(0, -SPACE);
+					soko.changePlayerVector(TOP_COLLISION);
 
 					if (flag) {
 						if (!isCollision) {
@@ -457,7 +470,7 @@ public class Board extends JPanel {
 						}
 					}
 
-					if (isFailedDetected(bags)) {
+					if (failed.isFailedDetected(bags)) {
 						isFailed();
 					}
 
@@ -475,6 +488,7 @@ public class Board extends JPanel {
 					}
 
 					soko.move(0, SPACE);
+					soko.changePlayerVector(BOTTOM_COLLISION);
 
 					if (flag) {
 						if (!isCollision) {
@@ -498,7 +512,7 @@ public class Board extends JPanel {
 						}
 					}
 
-					if (isFailedDetected(bags)) {
+					if (failed.isFailedDetected(bags)) {
 						isFailed();
 					}
 
@@ -534,11 +548,11 @@ public class Board extends JPanel {
 				switch (key1) { // 꼬임 내일 판별해야됨ㄴ!@#!@$!@$%#!#$%
 
 				case KeyEvent.VK_LEFT:
-					replay.goBackGetKey();
+					replay.goBack();
 					break;
 
 				case KeyEvent.VK_RIGHT:
-					replay.goAheadGetKey();
+					replay.goAhead();
 					break;
 
 				default:
@@ -766,170 +780,6 @@ public class Board extends JPanel {
 		return false;
 	}
 
-	private boolean isFailedDetected(Baggage bag) { // failed 조건 detected 메소드
-
-		if (bag != null) {
-
-			if (checkWallCollision(bag, TOP_COLLISION) || checkWallCollision(bag, BOTTOM_COLLISION)) { // 위, 아래 벽 두개 // 리팩토링 완료
-
-				for (int i = 0; i < walls.size(); i++) {
-					Wall item1 = walls.get(i); //item1 = 위에 있는 벽
-					if (bag.isTopCollision(item1) || bag.isBottomCollision(item1)) {
-
-						for (int j = 0; j < walls.size(); j++) {
-							Wall item2 = walls.get(j);
-							if (!item2.equals(item1) && item1.isLeftCollision(item2) || item1.isRightCollision(item2)) { // item2는 위의 양 옆의 벽
-
-								for (int k = 0; k < baggs.size(); k++) {
-									Baggage item3 = baggs.get(k);
-									if (!item3.equals(bag) && item2.isBottomCollision(item3)
-											|| item2.isTopCollision(item3)) { // item3는 item2 아래의 bag
-
-										return true;
-									}
-								}
-							}
-						}
-					}
-				}
-				if (checkWallCollision(bag, LEFT_COLLISION) || checkWallCollision(bag, RIGHT_COLLISION)) {
-
-					return true;
-				}
-			}
-
-			if (checkWallCollision(bag, LEFT_COLLISION) || checkWallCollision(bag, RIGHT_COLLISION)) { // 왼, 오른쪽 벽 2개 리팩토링 끝
-				for (int i = 0; i < walls.size(); i++) {
-
-					Wall item1 = walls.get(i);
-
-					if (bag.isLeftCollision(item1) || bag.isRightCollision(item1)) {
-
-						for (int j = 0; j < walls.size(); j++) {
-
-							Wall item2 = walls.get(j);
-
-							if (!item2.equals(item1) && item1.isTopCollision(item2) || item1.isBottomCollision(item2)) {
-								for (int k = 0; k < baggs.size(); k++) {
-									Baggage item3 = baggs.get(k);
-									if (!item3.equals(bag) && item2.isRightCollision(item3)
-											|| item2.isLeftCollision(item3)) {
-										return true;
-									}
-								}
-							}
-						}
-					}
-				}
-			} //
-
-			if (checkWallCollision(bag, TOP_COLLISION) || checkWallCollision(bag, BOTTOM_COLLISION)) { // 위에 벽 1개 , 아래 벽 1개 수정한거임 리팩토링
-				for (int i = 0; i < baggs.size(); i++) {
-					Baggage item1 = baggs.get(i);
-					if (!item1.equals(bag) && bag.isLeftCollision(item1) || bag.isRightCollision(item1)) { // item1 = bag 양옆의 bag 객체
-
-						for (int j = 0; j < walls.size(); j++) {
-							Wall item2 = walls.get(j);
-
-							if (bag.isBottomCollision(item2) || bag.isTopCollision(item2)) { // item2는 bag객체 위나 아래의 벽
-								for (int k = 0; k < baggs.size(); k++) {
-									Baggage item3 = baggs.get(k);
-
-									if (!item3.equals(item1) && !item3.equals(bag)) { // item3는 item2(벽) 양 옆의 객체
-										if (item2.isLeftCollision(item3) || item2.isRightCollision(item3))
-											return true;
-
-										if (bag.isTopCollision(item2) && item1.isBottomCollision(item3)
-												|| bag.isBottomCollision(item2) && item1.isTopCollision(item3)) {
-											for (int h = 0; h < walls.size(); h++) {
-												Wall item4 = walls.get(h);
-												if (!item4.equals(item2) && item3.isRightCollision(item4)
-														|| item3.isLeftCollision(item4)) {
-													return true;
-												}
-											}
-										}
-									}
-								}
-							}
-
-						}
-					}
-				}
-			} //
-
-			if (checkWallCollision(bag, LEFT_COLLISION) || checkWallCollision(bag, RIGHT_COLLISION)) { // 왼쪽 벽 하나 오른쪽 벽 하나 수정한거임 리팩토링
-				for (int i = 0; i < baggs.size(); i++) {
-					Baggage item1 = baggs.get(i);
-					if (!item1.equals(bag) && bag.isTopCollision(item1) || bag.isBottomCollision(item1)) { //item1은 bag 왼쪽 벽
-
-						for (int j = 0; j < walls.size(); j++) {
-							Wall item2 = walls.get(j);
-
-							if (bag.isRightCollision(item2) || bag.isBottomCollision(item2)) { //item2는 
-								for (int k = 0; k < baggs.size(); k++) {
-									Baggage item3 = baggs.get(k);
-
-									if (!item3.equals(item1) && !item3.equals(bag)) {
-										if (item2.isTopCollision(item3) || item2.isRightCollision(item3))
-											return true;
-
-										if (bag.isRightCollision(item2) && item1.isLeftCollision(item3)
-												|| bag.isLeftCollision(item2) && item1.isRightCollision(item3)) {
-											for (int h = 0; h < walls.size(); h++) {
-												Wall item4 = walls.get(h);
-												if (!item4.equals(item2) && item3.isTopCollision(item4)
-														|| item3.isBottomCollision(item4)) {
-													return true;
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-			for (int i = 0; i < baggs.size(); i++) { // 4개다 bag일때 수정한거임
-				Baggage item1 = baggs.get(i);
-				if (!item1.equals(bag) && bag.isTopCollision(item1) || bag.isBottomCollision(item1)) {
-
-					for (int j = 0; j < baggs.size(); j++) {
-
-						Baggage item2 = baggs.get(j);
-
-						if (!item2.equals(item1) && !item2.equals(bag)) {
-
-							if (item1.isLeftCollision(item2) || item1.isRightCollision(item2)) {
-
-								for (int k = 0; k < baggs.size(); k++) {
-
-									Baggage item3 = baggs.get(k);
-
-									if (item2.isBottomCollision(item3)) {
-
-										return true;
-									}
-
-									if (item2.isTopCollision(item3)) {
-
-										return true;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-		}
-
-		return false;
-
-	}
-
 	public void isCompleted() { // 다 최종지점에 넣었을경우 isCompleted=true
 
 		int nOfBags = baggs.size(); // Bag 객체의 숫자
@@ -1021,7 +871,7 @@ public class Board extends JPanel {
 				key = replay_Deque.pollLast();
 				replay.offerReplay_Deque(key);
 			}
-			replay.goBackGetKey();
+			replay.goBack();
 		}
 	}
 	
@@ -1053,6 +903,10 @@ public class Board extends JPanel {
 		return baggs.get(i);
 	}
 	
+	public Wall getWalls(int i) {
+		return walls.get(i);
+	}
+	
 	public Baggage getBags() {
 		return bags;
 	}
@@ -1076,10 +930,14 @@ public class Board extends JPanel {
 	}
 	
 	public boolean callIsFailedDetected(Baggage bags) {
-		return isFailedDetected(bags);
+		return failed.isFailedDetected(bags);
 	}
 	
 	public int getBaggsSize() {
 		return baggs.size();
+	}
+
+	public int getWallsSize() {
+		return walls.size();
 	}
 }

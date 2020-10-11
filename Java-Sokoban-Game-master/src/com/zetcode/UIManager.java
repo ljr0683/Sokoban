@@ -23,7 +23,7 @@ public class UIManager extends JFrame {
 
 		c.add(mainPanel);
 
-		setSize(500, 300);
+		setSize(1500, 900);
 		setLocationRelativeTo(null);
 	}
 
@@ -32,6 +32,9 @@ public class UIManager extends JFrame {
 		c.add(panel);
 		c.revalidate();
 		c.repaint();
+		setSize(1500, 900);
+		setLocationRelativeTo(null);
+		
 	} // 이 메소드는 메인화면에서 작동, 레벨 선택 버튼, 캐릭터 선택 버튼, 캐릭터 그리는 버튼 중 하나를 선택하면 작동
 
 	void changePanel(JPanel panel, int width, int height) { // 레벨 바꿀때 쓰는 changePanel, Panel 객체를 받아와 그 패널로 컨텐트팬을 채움
@@ -41,6 +44,7 @@ public class UIManager extends JFrame {
 		c.repaint();
 		setSize(width + OFFSET, height + 2 * OFFSET);
 		panel.requestFocusInWindow();
+		setLocationRelativeTo(null);
 	} // 이 메소드는 레벨 선택화면에서 작동, 레벨 1,2,3,4,5중 하나를 선택하면 작동
 
 }

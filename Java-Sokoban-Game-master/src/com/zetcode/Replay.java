@@ -43,7 +43,7 @@ public class Replay {
 		frame.changePanel(board, width, height);
 	}
 	
-	public void goBackGetKey() {
+	public void goBack() {
 		int key3 = 0 ;
 		 
 		if(!undo) {
@@ -86,14 +86,14 @@ public class Replay {
 	
 			}
 			
-			goBack(key3);
+			DoingGoBack(key3);
 		}
 		else {
-			goBack(key3);
+			DoingGoBack(key3);
 		}
 	}
 	
-	private void goBack(int key3) {
+	private void DoingGoBack(int key3) {
 		switch (key3) {
 		case Board.LEFT_COLLISION:
 			if (board.getIsCollision()) {
@@ -164,7 +164,7 @@ public class Replay {
 	}
 	
 	
-	public void goAheadGetKey() {
+	public void goAhead() {
 		int key2 = replay_Deque.poll();
 
 		replay_Stack.push(key2);
@@ -196,14 +196,14 @@ public class Replay {
 				break;
 			}
 			
-			goAhead(key2);
+			DoingGoAhead(key2);
 		}
 		else {
-			goAhead(key2);
+			DoingGoAhead(key2);
 		}
 	}
 	
-	public void goAhead(int key2) {
+	public void DoingGoAhead(int key2) {
 		switch (key2) {
 
 		case Board.LEFT_COLLISION:
@@ -217,6 +217,7 @@ public class Replay {
 			}
 
 			board.getSoko().move(-Board.SPACE, 0); 
+			board.getSoko().changePlayerVector(Board.LEFT_COLLISION);
 
 			if (board.getBags()!= null) {
 				board.callIsEntered(board.getBags());
@@ -224,10 +225,11 @@ public class Replay {
 					break;
 				}
 			}
-
+			
 			if (board.callIsFailedDetected(board.getBags())) {
 				board.callIsFailed();
 			}
+			
 
 			break;
 
@@ -242,6 +244,7 @@ public class Replay {
 			}
 
 			board.getSoko().move(Board.SPACE, 0);
+			board.getSoko().changePlayerVector(Board.RIGHT_COLLISION);
 
 			if (board.getBags() != null) {
 				board.callIsEntered(board.getBags());
@@ -250,10 +253,11 @@ public class Replay {
 				}
 			}
 
+			
 			if (board.callIsFailedDetected(board.getBags())) {
 				board.callIsFailed();
 			}
-
+			
 			break;
 
 		case Board.TOP_COLLISION:
@@ -267,6 +271,7 @@ public class Replay {
 			}
 
 			board.getSoko().move(0, -Board.SPACE);
+			board.getSoko().changePlayerVector(Board.TOP_COLLISION);
 
 			if (board.getBags() != null) {
 				board.callIsEntered(board.getBags());
@@ -275,9 +280,11 @@ public class Replay {
 				}
 			}
 
+		
 			if (board.callIsFailedDetected(board.getBags())) {
 				board.callIsFailed();
 			}
+			
 
 			break;
 
@@ -291,6 +298,7 @@ public class Replay {
 			}
 
 			board.getSoko().move(0, Board.SPACE);
+			board.getSoko().changePlayerVector(Board.BOTTOM_COLLISION);
 
 			if (board.getBags() != null) {
 				board.callIsEntered(board.getBags());
@@ -299,9 +307,11 @@ public class Replay {
 				}
 			}
 
+			
 			if (board.callIsFailedDetected(board.getBags())) {
 				board.callIsFailed();
 			}
+			
 
 			break;
 		

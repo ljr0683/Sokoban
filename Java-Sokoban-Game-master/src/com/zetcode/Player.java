@@ -13,7 +13,13 @@ public class Player extends Actor {
 
     private void initPlayer() {
 
-        ImageIcon iicon = new ImageIcon("src/resources/sokoban.png");
+        ImageIcon iicon = new ImageIcon("src/resources/sokoban/StartPlayer.png");
+        Image image = iicon.getImage();
+        setImage(image);
+    }
+    
+    public void changePlayerVector(int direction) {
+    	ImageIcon iicon = new ImageIcon("src/resources/sokoban/"+direction+"Player.png");
         Image image = iicon.getImage();
         setImage(image);
     }
