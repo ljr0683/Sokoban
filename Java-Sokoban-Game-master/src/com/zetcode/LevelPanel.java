@@ -12,7 +12,7 @@ public class LevelPanel extends JPanel {
 	private MainPanel previousPanel; // 뒤로가기 버튼을 위해 선언(전 패널 객체를 얻기 위해)
 	private JButton backSpaceButton = new JButton("<-"); // 뒤로가기 버튼
 	private LevelPanel panel; //board에서 뒤로가기 위한 패널 파라미터로 넘겨주는 패널
-	private LevelSelectPanel levelSelectPanel;
+	private SelectCharacterPanel selectCharacterPanel;
 	private Score Score;
 
 
@@ -43,8 +43,8 @@ public class LevelPanel extends JPanel {
 			
 			for(int i=0; i<levelButton.length; i++) {
 				if(b.equals(levelButton[i])) {
-					LevelSelectPanel level = new LevelSelectPanel(frame, panel, i);
-					frame.changePanel(level);
+					selectCharacterPanel  = new SelectCharacterPanel(frame, panel, i);
+					frame.changePanel(selectCharacterPanel);
 				}
 			}
 			

@@ -12,7 +12,7 @@ public class Replay {
 
 	private int backCounter = 0;
 	
-	Replay(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file){
+	Replay(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, String selectCharacter){
 		replay_Deque = new LinkedList<>();
 		
 		this.file = file;
@@ -28,7 +28,7 @@ public class Replay {
 			e.printStackTrace();
 		}
 		
-		createBoard(levelSelected, previousPanel, frame, file);
+		createBoard(levelSelected, previousPanel, frame, file, selectCharacter);
 	}
 	
 	Replay(Board board){
@@ -36,8 +36,8 @@ public class Replay {
 		undo = true;
 	}
 	
-	private void createBoard(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file) {
-		board = new Board(levelSelected, previousPanel, frame, file, this);
+	private void createBoard(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, String selectCharacter) {
+		board = new Board(levelSelected, previousPanel, frame, file, this, selectCharacter);
 		int width = board.getBoardWidth();
 		int height = board.getBoardHeight();
 		frame.changePanel(board, width, height);
@@ -105,6 +105,7 @@ public class Replay {
 				board.getBags().move(Board.SPACE, 0);
 			}
 			board.getSoko().move(Board.SPACE, 0);
+			board.getSoko().changePlayerVector(Board.LEFT_COLLISION);
 			
 			if(!undo)
 				replay_Deque.offerFirst(key3);
@@ -121,6 +122,7 @@ public class Replay {
 			}
 
 			board.getSoko().move(-Board.SPACE, 0);
+			board.getSoko().changePlayerVector(Board.RIGHT_COLLISION);
 			
 			if(!undo)
 				replay_Deque.offerFirst(key3);
@@ -137,6 +139,7 @@ public class Replay {
 			}
 
 			board.getSoko().move(0, Board.SPACE);
+			board.getSoko().changePlayerVector(Board.TOP_COLLISION);
 			
 			if(!undo)
 				replay_Deque.offerFirst(key3);
@@ -153,6 +156,7 @@ public class Replay {
 			}
 
 			board.getSoko().move(0, -Board.SPACE);
+			board.getSoko().changePlayerVector(Board.BOTTOM_COLLISION);
 			
 			if(!undo)
 				replay_Deque.offerFirst(key3);

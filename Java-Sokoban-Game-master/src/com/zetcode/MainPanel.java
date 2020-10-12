@@ -46,9 +46,9 @@ public class MainPanel extends JPanel {
 																		// 전환
 			}
 
-			if (b.equals(selectCharacterButton)) {
-				frame.changePanel(new SelectCharacterPanel(frame, panel)); // 위와 동일
-			}
+//			if (b.equals(selectCharacterButton)) {
+//				frame.changePanel(new SelectCharacterPanel(frame, panel)); // 위와 동일
+//			}
 
 			if (b.equals(drawCharacterButton)) {
 				frame.changePanel(new DrawCharacterPanel(frame, panel)); // 위와 동일
@@ -56,5 +56,4 @@ public class MainPanel extends JPanel {
 
 		}
 	}
-
 }

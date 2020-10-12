@@ -133,7 +133,7 @@ public class FailedDetected {
 				}
 			}
 
-			for (int i = 0; i < board.getBaggsSize(); i++) { // 4개다 bag일때 수정한거임
+			for (int i = 0; i < board.getBaggsSize(); i++) { // 4개다 bag일때 이거 수정해야됨
 				Baggage item1 = board.getBaggs(i);
 				if (!item1.equals(bag) && bag.isTopCollision(item1) || bag.isBottomCollision(item1)) {
 

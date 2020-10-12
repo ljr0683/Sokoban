@@ -12,23 +12,25 @@ public class LevelSelectPanel extends JPanel {
 	private JButton startButton = new JButton("start");
 	private JButton backSpaceButton = new JButton("<-");
 	private JLabel score[] = new JLabel[6];
+	private String selectCharacter;
 	
 	private File file;
 	
 	private UIManager frame;
-	private LevelPanel previousPanel;
+	private SelectCharacterPanel previousPanel;
 	private LevelSelectPanel panel;
 	
 	private int width, height; // 게임의 크기 설정하기 위함
 	private int levelSelected;
 	
-	public LevelSelectPanel(UIManager frame, LevelPanel previousPanel, int levelSelected) {
+	public LevelSelectPanel(UIManager frame, SelectCharacterPanel previousPanel, int levelSelected, String selectCharacter) {
 		
 		panel = this;
 		
 		this.frame=frame;
 		this.previousPanel=previousPanel;
 		this.levelSelected=levelSelected;
+		this.selectCharacter = selectCharacter;
 		
 		add(backSpaceButton);
 		add(completedReplayButton);
@@ -63,7 +65,7 @@ public class LevelSelectPanel extends JPanel {
 				file = new File(filePath);
 				
 				if(file.exists()) {
-					Replay replay = new Replay(levelSelected, panel, frame, file);
+					Replay replay = new Replay(levelSelected, panel, frame, file, selectCharacter);
 				}
 				
 			}
@@ -75,12 +77,12 @@ public class LevelSelectPanel extends JPanel {
 				file = new File(filePath);
 				
 				if(file.exists()) {
-					Replay replay = new Replay(levelSelected, panel, frame, file);
+					Replay replay = new Replay(levelSelected, panel, frame, file, selectCharacter);
 				}
 			}
 			
 			if(b.equals(startButton)) {
-				Board board = new Board(levelSelected, panel, frame);
+				Board board = new Board(levelSelected, panel, frame, selectCharacter);
 				width = board.getBoardWidth();
 				height = board.getBoardHeight();
 				frame.changePanel(board, width, height);

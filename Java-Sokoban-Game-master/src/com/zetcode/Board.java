@@ -25,6 +25,7 @@ public class Board extends JPanel {
 	private boolean flag = false; // 밀면서 갔는지 확인하는 함수
 	private Replay replay;
 	private FailedDetected failed;
+	private String selectCharacter;
 
 	private final int OFFSET = 30;
 	public static int SPACE = 64;
@@ -120,35 +121,25 @@ public class Board extends JPanel {
  
           };
 
-	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame) {
+	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, String selectCharacter) {
 
 		setLayout(null);
 
 		this.previousPanel = previousPanel;
 		this.levelSelected = levelSelected;
 		this.frame = frame;
+		this.selectCharacter = selectCharacter;
 
 		add(backSpaceButton);
 		add(undoCountText);
-		backSpaceButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JButton b = (JButton) e.getSource();
-
-				if (b.equals(backSpaceButton)) {
-					frame.changePanel(previousPanel);
-				}
-
-			}
-		}); // 뒤로가기 버튼에 액션리스너 등록
+		backSpaceButton.addActionListener(new MyActionListener()); 
 		backSpaceButton.setBounds(25, 20, 45, 20);
 		failed = new FailedDetected(this);
 		
 		initBoard();
 	}
 
-	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, Replay replay) {
+	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, Replay replay, String selectCharacter) {
 
 		setLayout(null);
 
@@ -156,21 +147,10 @@ public class Board extends JPanel {
 		this.levelSelected = levelSelected;
 		this.frame = frame;
 		this.file = file;
+		this.selectCharacter = selectCharacter;
 
 		add(backSpaceButton);
-		backSpaceButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JButton b = (JButton) e.getSource();
-
-				if (b.equals(backSpaceButton)) {
-					frame.changePanel(previousPanel);
-				}
-
-			}
-		}); // 뒤로가기 버튼에 액션리스너 등록
-
+		backSpaceButton.addActionListener(new MyActionListener()); 
 		backSpaceButton.setBounds(25, 20, 45, 20);
 
 		try {
@@ -255,7 +235,7 @@ public class Board extends JPanel {
 				break;
 
 			case '@':
-				soko = new Player(x, y); // 플레이어임
+				soko = new Player(x, y, selectCharacter); // 플레이어임
 				x += SPACE;
 				break;
 
@@ -293,7 +273,13 @@ public class Board extends JPanel {
 				g.drawImage(item.getImage(), item.x() + 16, item.y() + 16, this);
 			}
 			else if(item instanceof Player) {
-				g.drawImage(item.getImage(), item.x() + 13, item.y() , this);
+				if(selectCharacter.equals("Mario")) {
+					g.drawImage(item.getImage(), item.x(), item.y() , this);
+					
+				}else {
+					g.drawImage(item.getImage(), item.x() + 13, item.y() , this);
+					
+				}
 			}
 			else {
 
@@ -938,6 +924,18 @@ public class Board extends JPanel {
 	}
 
 	public int getWallsSize() {
+
 		return walls.size();
+	}
+	
+	class MyActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JButton b = (JButton) e.getSource();
+
+			if (b.equals(backSpaceButton)) {
+				frame.changePanel(previousPanel);
+			}
+		}
 	}
 }
