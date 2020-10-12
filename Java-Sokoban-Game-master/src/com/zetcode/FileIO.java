@@ -6,15 +6,27 @@ import java.util.*;
 public class FileIO {
 	private Deque<Integer> replay_Queue = new LinkedList<Integer>();
 	private String filePath;
+	private String folderPath;
 	
-	public void FileInput(int levelSelected, String s) {
-		FileWriter fw = null;
+	public void scoreFileInput(int levelSelected) {
+		
+		
+	}
+	
+	public void replayFileInput(int levelSelected, String s) {
 		
 		filePath = "src\\replay\\"+s+"_replay_"+levelSelected+".txt";
-		String folderPath = "src\\replay";
+		folderPath = "src\\replay";
 		
 		File folder = new File(folderPath);
 		File file = new File(filePath);
+		
+		FileInput(levelSelected, s, folder, file);
+	}
+	
+	public void FileInput(int levelSelected, String s, File folder, File file) {
+
+		FileWriter fw = null;
 		
 		try {
 			if(!folder.exists())

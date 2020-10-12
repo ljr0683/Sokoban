@@ -1,5 +1,6 @@
 package com.zetcode;
 
+import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
@@ -11,8 +12,10 @@ public class LevelSelectPanel extends JPanel {
 	private JButton failedReplayButton = new JButton("Failed Replay");
 	private JButton startButton = new JButton("start");
 	private JButton backSpaceButton = new JButton("<-");
-	private JLabel score[] = new JLabel[6];
+	private JLabel score[] = new JLabel[5];
 	private String selectCharacter;
+	private JLabel backSpaceLabel;
+	private ImageIcon backGroundImage;
 	
 	private File file;
 	
@@ -25,6 +28,8 @@ public class LevelSelectPanel extends JPanel {
 	
 	public LevelSelectPanel(UIManager frame, SelectCharacterPanel previousPanel, int levelSelected, String selectCharacter) {
 		
+		setLayout(null);
+		
 		panel = this;
 		
 		this.frame=frame;
@@ -32,22 +37,46 @@ public class LevelSelectPanel extends JPanel {
 		this.levelSelected=levelSelected;
 		this.selectCharacter = selectCharacter;
 		
-		add(backSpaceButton);
+		ImageIcon backSpaceIcon = new ImageIcon("src/resources/BackSpace/BackSpace.png");
+		backSpaceLabel = new JLabel(backSpaceIcon);
+		
+		backGroundImage = new ImageIcon("src/resources/Background/DefaultBackground.png");
+		
+		add(backSpaceLabel);
 		add(completedReplayButton);
 		add(failedReplayButton);
 		add(startButton);
 		score[levelSelected] = new JLabel(Integer.toString(levelSelected));
 		add(score[levelSelected]);
 		
-		backSpaceButton.addActionListener(new MyActionListener()); // 뒤로가기 버튼에 액션리스너 등록
+		backSpaceLabel.setBounds(25, 20, 128, 128);
+		completedReplayButton.setBounds(500, 700, 120, 50);
+		failedReplayButton.setBounds(740, 700, 120, 50);
+		startButton.setBounds(980, 700, 120, 50);
+		
+		backSpaceLabel.addMouseListener(new MyMouseListener()); // 뒤로가기 버튼에 액션리스너 등록
 		completedReplayButton.addActionListener(new MyActionListener());
 		failedReplayButton.addActionListener(new MyActionListener());
 		startButton.addActionListener(new MyActionListener());
-		//backSpaceButton.setBounds(25, 20, 45, 20); // 뒤로가기 버튼 위치, 크기 조정
 	}
 	
 	public void setScore(int levelSelected, int score) {
 		this.score[levelSelected].setText(Integer.toString(score));
+	}
+	
+	@Override
+	public void paintComponent(Graphics g) {
+		g.drawImage(backGroundImage.getImage(), 0, 0, this);
+	}
+	
+	class MyMouseListener extends MouseAdapter{
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			JLabel la = (JLabel)e.getSource();
+			if(la.equals(backSpaceLabel)) {
+				frame.changePanel(previousPanel);
+			}
+		}
 	}
 	
 	class MyActionListener implements ActionListener{

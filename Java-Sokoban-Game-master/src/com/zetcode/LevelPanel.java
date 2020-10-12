@@ -7,7 +7,7 @@ import javax.swing.*;
 
 public class LevelPanel extends JPanel {
 
-	private JButton[] levelButton = new JButton[5]; // 버튼 5개 선언
+	private JLabel[] levelJLabel = new JLabel[5];
 
 	private UIManager frame; // GameStart 클래스의 change 메소드를 사용하기 위해 선언
 	private MainPanel previousPanel; // 뒤로가기 버튼을 위해 선언(전 패널 객체를 얻기 위해)
@@ -15,6 +15,8 @@ public class LevelPanel extends JPanel {
 	private SelectCharacterPanel selectCharacterPanel;
 	private Score Score;
 	private ImageIcon backGroundImage;
+	private ImageIcon[] normalIcon = new ImageIcon[5];
+	private ImageIcon[] mouseEnteredIcon = new ImageIcon[5];
 
 	public LevelPanel(UIManager frame, MainPanel previousPanel) { //생성자
 		setLayout(null); // 레이아웃을 설정 x 내 마음대로 배치 가능
@@ -23,18 +25,18 @@ public class LevelPanel extends JPanel {
 		panel = this;
 		Score = new Score();
 		
-		ImageIcon normalIcon = new ImageIcon("src/resources/ButtonIcon/Button1.png");
 		
-		
-		for (int i = 0; i < levelButton.length; i++) { // 레벨 버튼 초기화 및 버튼 등록, 액션리스너 등록, 위치, 크기 조정
-			levelButton[i] = new JButton(normalIcon);
-			levelButton[i].setBounds(500 + i * 120, 700, 64, 64);
-			add(levelButton[i]);
-			levelButton[i].addActionListener(new MyActionListener());
+		for (int i = 0; i < levelJLabel.length; i++) { // 레벨 버튼 초기화 및 버튼 등록, 액션리스너 등록, 위치, 크기 조정
+			normalIcon[i] = new ImageIcon("src/resources/ButtonIcon/defaultButton/Button"+i+".png");
+			mouseEnteredIcon[i] = new ImageIcon("src/resources/ButtonIcon/EnteredButton/Button"+i+".png");
+			levelJLabel[i] = new JLabel(normalIcon[i]);
+			levelJLabel[i].setBounds(500 + i * 120, 700, 64, 64);
+			add(levelJLabel[i]);
+			levelJLabel[i].addMouseListener(new MyMouseListener());
 			
 		}
 		
-		backGroundImage = new ImageIcon("src/resources/Background/MainPng.png");
+		backGroundImage = new ImageIcon("src/resources/Background/SelectLevelBackground.png");
 		
 	}
 	
@@ -43,25 +45,42 @@ public class LevelPanel extends JPanel {
 		g.drawImage(backGroundImage.getImage(), 0, 0, this);
 	}
 	
-	
-
-
-	private class MyActionListener implements ActionListener { // 액션리스너
+	private class MyMouseListener extends MouseAdapter{
 		@Override
-		public void actionPerformed(ActionEvent e) {
-			JButton b = (JButton) e.getSource(); // 어떤 버튼이 눌렸는지 알아냄
+		public void mouseClicked(MouseEvent e) {
+			JLabel la = (JLabel)e.getSource();
 			
-			for(int i=0; i<levelButton.length; i++) {
-				if(b.equals(levelButton[i])) {
+			for(int i=0; i<levelJLabel.length; i++) {
+				if(la.equals(levelJLabel[i])) {
+					la.setIcon(normalIcon[i]);
 					selectCharacterPanel  = new SelectCharacterPanel(frame, panel, i);
 					frame.changePanel(selectCharacterPanel);
 				}
 			}
+		}
+		
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			JLabel la = (JLabel)e.getSource();
 			
-//			if(b.equals(backSpaceButton)) { // 뒤로가기 버튼이 눌리면
-//				frame.changePanel(previousPanel);
-//			}
+			for(int i=0; i<levelJLabel.length; i++) {
+				if(la.equals(levelJLabel[i])) {
+					la.setIcon(mouseEnteredIcon[i]);
+				}
+			}
+		}
+		
+		@Override
+		public void mouseExited(MouseEvent e) {
+			JLabel la = (JLabel)e.getSource();
+			
+			for(int i=0; i<levelJLabel.length; i++) {
+				if(la.equals(levelJLabel[i])) {
+					la.setIcon(normalIcon[i]);
+				}
+			}
 		}
 	}
+
 
 }

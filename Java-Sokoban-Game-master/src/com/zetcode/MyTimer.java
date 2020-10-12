@@ -33,4 +33,8 @@ public class MyTimer {
 	public void setIsFinished(boolean isfinished) {
 		this.isfinished = isfinished;
 	}
+	
+	public int getTime() {
+		return time;
+	}
 }

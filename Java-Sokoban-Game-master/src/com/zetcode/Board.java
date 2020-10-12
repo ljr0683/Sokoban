@@ -13,7 +13,8 @@ public class Board extends JPanel {
 
 	private JButton backSpaceButton = new JButton("<-");
 	private int undoCount = 3;
-	private int moveCount = 0;
+	private int moveCount;
+	private int timeCount;
 	private JLabel undoCountText = new JLabel("ExtraUndo : "+Integer.toString(undoCount));
 	private UIManager frame;
 	private LevelSelectPanel previousPanel;
@@ -22,6 +23,8 @@ public class Board extends JPanel {
 	private Replay replay;
 	private FailedDetected failed;
 	private MyTimer time;
+	private ImageIcon backSpaceIcon = new ImageIcon("src/resources/BackSpace/BackSpace.png");
+	private JLabel backSpaceLabel = new JLabel(backSpaceIcon);
 	
 	private boolean isReplay = false;
 	private int size;
@@ -122,11 +125,14 @@ public class Board extends JPanel {
 		this.levelSelected = levelSelected;
 		this.frame = frame;
 		this.selectCharacter = selectCharacter;
+		this.moveCount = 0;
+		this.timeCount = 0;
 
-		add(backSpaceButton);
 		add(undoCountText);
-		backSpaceButton.addActionListener(new MyActionListener()); 
-		backSpaceButton.setBounds(25, 20, 45, 20);
+		add(backSpaceLabel);
+		
+		backSpaceLabel.addMouseListener(new MyMouseListener()); 
+		backSpaceLabel.setBounds(25, 20, 128, 128);
 		failed = new FailedDetected(this);
 		time = new MyTimer();
 	
@@ -143,9 +149,9 @@ public class Board extends JPanel {
 		this.file = file;
 		this.selectCharacter = selectCharacter;
 
-		add(backSpaceButton);
-		backSpaceButton.addActionListener(new MyActionListener()); 
-		backSpaceButton.setBounds(25, 20, 45, 20);
+		add(backSpaceLabel);
+		backSpaceLabel.addMouseListener(new MyMouseListener()); 
+		backSpaceLabel.setBounds(25, 20, 128, 128);
 
 		try {
 			FileReader fr = new FileReader(file);
@@ -287,13 +293,18 @@ public class Board extends JPanel {
 			}
 
 			if (isCompleted) { // isCompleted가 true면 화면에 completed를 띄움
-				time.setIsFinished(true);
+				if(replay==null) { // replay가 아닐떄만 스코어 계산
+					this.timeCount = time.getTime();
+					time.setIsFinished(true);
+				}
 				g.setColor(new Color(0, 0, 0));
 				g.drawString("Completed", w / 2 - 35, 20);
 			}
 
 			if (isFailed) {
-				time.setIsFinished(true);
+				if(replay==null) {
+					time.setIsFinished(true);
+				}
 				g.setColor(new Color(0, 0, 0));
 				g.drawString("Failed", w / 2 - 35, 20);
 			}
@@ -797,7 +808,7 @@ public class Board extends JPanel {
 				fileio.enqueue(replay_Deque.poll());
 			}
 			
-			fileio.FileInput(levelSelected, s);
+			fileio.replayFileInput(levelSelected, s);
 			
 			isCompleted = true; // 따라서 끝남
 			repaint(); // 컴포넌트의 모양 색상등이 바뀌었을때 사용
@@ -816,7 +827,7 @@ public class Board extends JPanel {
 				fileio.enqueue(replay_Deque.poll());
 			}
 
-			fileio.FileInput(levelSelected, s);
+			fileio.replayFileInput(levelSelected, s);
 		}
 		repaint();
 
@@ -935,6 +946,16 @@ public class Board extends JPanel {
 			JButton b = (JButton) e.getSource();
 
 			if (b.equals(backSpaceButton)) {
+				frame.changePanel(previousPanel);
+			}
+		}
+	}
+	
+	class MyMouseListener extends MouseAdapter{
+		public void mouseClicked(MouseEvent e) {
+			JLabel la = (JLabel)e.getSource();
+			if(la.equals(backSpaceLabel)) {
+				time.setIsFinished(true);
 				frame.changePanel(previousPanel);
 			}
 		}
