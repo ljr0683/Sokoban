@@ -13,7 +13,6 @@ public class LevelPanel extends JPanel {
 	private MainPanel previousPanel; // 뒤로가기 버튼을 위해 선언(전 패널 객체를 얻기 위해)
 	private LevelPanel panel; //board에서 뒤로가기 위한 패널 파라미터로 넘겨주는 패널
 	private SelectCharacterPanel selectCharacterPanel;
-	private Score Score;
 	private ImageIcon backGroundImage;
 	private ImageIcon[] normalIcon = new ImageIcon[5];
 	private ImageIcon[] mouseEnteredIcon = new ImageIcon[5];
@@ -23,7 +22,6 @@ public class LevelPanel extends JPanel {
 		this.frame = frame; // GameStart 객체를 받아옴 change 메소드를 사용하기 위함
 		this.previousPanel = previousPanel; // 뒤로가기를 위함
 		panel = this;
-		Score = new Score();
 		
 		
 		for (int i = 0; i < levelJLabel.length; i++) { // 레벨 버튼 초기화 및 버튼 등록, 액션리스너 등록, 위치, 크기 조정

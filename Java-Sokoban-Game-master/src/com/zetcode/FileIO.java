@@ -7,30 +7,38 @@ public class FileIO {
 	private Deque<Integer> replay_Queue = new LinkedList<Integer>();
 	private String filePath;
 	private String folderPath;
+	FileWriter fw = null;
 	
-	public void scoreFileInput(int levelSelected) {
-		
-		
-	}
-	
-	public void replayFileInput(int levelSelected, String s) {
-		
-		filePath = "src\\replay\\"+s+"_replay_"+levelSelected+".txt";
-		folderPath = "src\\replay";
+	public void scoreFileInput(int levelSelected, int score) {
+		folderPath = "src/score";
+		filePath = "src/score/score_"+levelSelected+".txt";
 		
 		File folder = new File(folderPath);
 		File file = new File(filePath);
 		
-		FileInput(levelSelected, s, folder, file);
+		try {
+			if(!folder.exists())
+					folder.mkdir();
+			fw = new FileWriter(file,false);
+			fw.write(Integer.toString(score));
+			fw.flush();
+			fw.close();
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	public void FileInput(int levelSelected, String s, File folder, File file) {
-
-		FileWriter fw = null;
+	public void replayFileInput(int levelSelected, String s) {
+		
+		folderPath = "src\\replay";
+		filePath = "src\\replay\\"+s+"_replay_"+levelSelected+".txt";
+		
+		File folder = new File(folderPath);
+		File file = new File(filePath);
 		
 		try {
 			if(!folder.exists())
-				folder.mkdir();
+					folder.mkdir();
 			fw = new FileWriter(file,false);
 			int size = replay_Queue.size();
 			for(int j=0; j<size; j++) {
@@ -39,7 +47,7 @@ public class FileIO {
 			fw.flush();
 			fw.close();
 		}catch(IOException e) {
-			
+			e.printStackTrace();
 		}
 	}
 	

@@ -14,7 +14,7 @@ public class Board extends JPanel {
 	private JButton backSpaceButton = new JButton("<-");
 	private int undoCount = 3;
 	private int moveCount;
-	private int timeCount;
+	private int timerCount;
 	private JLabel undoCountText = new JLabel("ExtraUndo : "+Integer.toString(undoCount));
 	private UIManager frame;
 	private LevelSelectPanel previousPanel;
@@ -25,6 +25,7 @@ public class Board extends JPanel {
 	private MyTimer time;
 	private ImageIcon backSpaceIcon = new ImageIcon("src/resources/BackSpace/BackSpace.png");
 	private JLabel backSpaceLabel = new JLabel(backSpaceIcon);
+	private Score score;
 	
 	private boolean isReplay = false;
 	private int size;
@@ -126,7 +127,7 @@ public class Board extends JPanel {
 		this.frame = frame;
 		this.selectCharacter = selectCharacter;
 		this.moveCount = 0;
-		this.timeCount = 0;
+		this.timerCount = 0;
 
 		add(undoCountText);
 		add(backSpaceLabel);
@@ -293,10 +294,7 @@ public class Board extends JPanel {
 			}
 
 			if (isCompleted) { // isCompleted가 true면 화면에 completed를 띄움
-				if(replay==null) { // replay가 아닐떄만 스코어 계산
-					this.timeCount = time.getTime();
-					time.setIsFinished(true);
-				}
+				
 				g.setColor(new Color(0, 0, 0));
 				g.drawString("Completed", w / 2 - 35, 20);
 			}
@@ -801,14 +799,22 @@ public class Board extends JPanel {
 		if (finishedBags == nOfBags) { // finishedBag과 nOfbags가 같으면 모두 최종지점에 넣었다는 뜻
 			String s = "Completed";
 
-			FileIO fileio = new FileIO();
+			FileIO replayFileIo = new FileIO();
 			int size = replay_Deque.size();
 			
 			for (int i = 0; i < size; i++) {
-				fileio.enqueue(replay_Deque.poll());
+				replayFileIo.enqueue(replay_Deque.poll());
 			}
 			
-			fileio.replayFileInput(levelSelected, s);
+			replayFileIo.replayFileInput(levelSelected, s);
+			
+			 
+			if(replay==null) { // replay가 아닐떄만 스코어 계산
+				this.timerCount = time.getTime();
+				time.setIsFinished(true);
+				File scoreFile = new File("src/score/score_"+levelSelected+".txt");
+				score = new Score(levelSelected, moveCount, timerCount, scoreFile);
+			}
 			
 			isCompleted = true; // 따라서 끝남
 			repaint(); // 컴포넌트의 모양 색상등이 바뀌었을때 사용
