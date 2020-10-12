@@ -13,12 +13,9 @@ public class FileIO {
 		folderPath = "src/score";
 		filePath = "src/score/score_"+levelSelected+".txt";
 		
-		File folder = new File(folderPath);
 		File file = new File(filePath);
 		
 		try {
-			if(!folder.exists())
-					folder.mkdir();
 			fw = new FileWriter(file,false);
 			fw.write(Integer.toString(score));
 			fw.flush();

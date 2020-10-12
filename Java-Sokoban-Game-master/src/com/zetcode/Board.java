@@ -812,6 +812,9 @@ public class Board extends JPanel {
 			if(replay==null) { // replay가 아닐떄만 스코어 계산
 				this.timerCount = time.getTime();
 				time.setIsFinished(true);
+				File scoreFileFolder = new File("src/score");
+				if(!scoreFileFolder.exists())
+					scoreFileFolder.mkdir();
 				File scoreFile = new File("src/score/score_"+levelSelected+".txt");
 				score = new Score(levelSelected, moveCount, timerCount, scoreFile);
 			}
