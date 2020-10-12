@@ -13,18 +13,21 @@ public class Board extends JPanel {
 
 	private JButton backSpaceButton = new JButton("<-");
 	private int undoCount = 3;
+	private int moveCount = 0;
 	private JLabel undoCountText = new JLabel("ExtraUndo : "+Integer.toString(undoCount));
 	private UIManager frame;
 	private LevelSelectPanel previousPanel;
 	private Baggage bags = null;
+	private File file;
+	private Replay replay;
+	private FailedDetected failed;
+	private MyTimer time;
+	
 	private boolean isReplay = false;
 	private int size;
-	private File file;
 	private boolean isCollision = false;
 	private int levelSelected;
 	private boolean flag = false; // 밀면서 갔는지 확인하는 함수
-	private Replay replay;
-	private FailedDetected failed;
 	private String selectCharacter;
 
 	private final int OFFSET = 30;
@@ -107,17 +110,7 @@ public class Board extends JPanel {
           + "        # $ $  # \n"
           + "        ### ## # \n"
           + "          #    # \n"
-          + "          ###### \n",
-          
-            "#################\n"
-          + "#               #\n"
-          + "#        #      #\n"
-          + "#          $@   #\n"
-          + "#      #        #\n"
-          + "#         .     #\n"
-          + "#               #\n"
-          + "#               #\n"
-          + "#################\n"
+          + "          ###### \n"
  
           };
 
@@ -135,7 +128,8 @@ public class Board extends JPanel {
 		backSpaceButton.addActionListener(new MyActionListener()); 
 		backSpaceButton.setBounds(25, 20, 45, 20);
 		failed = new FailedDetected(this);
-		
+		time = new MyTimer();
+	
 		initBoard();
 	}
 
@@ -293,13 +287,13 @@ public class Board extends JPanel {
 			}
 
 			if (isCompleted) { // isCompleted가 true면 화면에 completed를 띄움
-
+				time.setIsFinished(true);
 				g.setColor(new Color(0, 0, 0));
 				g.drawString("Completed", w / 2 - 35, 20);
 			}
 
 			if (isFailed) {
-
+				time.setIsFinished(true);
 				g.setColor(new Color(0, 0, 0));
 				g.drawString("Failed", w / 2 - 35, 20);
 			}
@@ -322,12 +316,12 @@ public class Board extends JPanel {
 		public void keyPressed(KeyEvent e) {
 
 			if (isCompleted) { // 게임이 끝남.
-
+				
 				return;
 			}
 
 			if (isFailed) {
-
+				
 				return;
 			}
 
@@ -338,7 +332,9 @@ public class Board extends JPanel {
 				switch (key) {
 
 				case KeyEvent.VK_LEFT:
-
+					
+					moveCount++;
+					
 					if (checkWallCollision(soko, LEFT_COLLISION)) { // soko객체 왼쪽에 벽이 있다면 움직이지 않고 키 이벤트를 끝냄
 						return;
 					}
@@ -382,6 +378,8 @@ public class Board extends JPanel {
 
 				case KeyEvent.VK_RIGHT:
 
+					moveCount++;
+					
 					if (checkWallCollision(soko, RIGHT_COLLISION)) {
 						return;
 					}
@@ -423,6 +421,8 @@ public class Board extends JPanel {
 
 				case KeyEvent.VK_UP:
 
+					moveCount++;
+					
 					if (checkWallCollision(soko, TOP_COLLISION)) {
 						return;
 					}
@@ -464,6 +464,7 @@ public class Board extends JPanel {
 
 				case KeyEvent.VK_DOWN:
 
+					moveCount++;
 
 					if (checkWallCollision(soko, BOTTOM_COLLISION)) {
 						return;
