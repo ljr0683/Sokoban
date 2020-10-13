@@ -9,13 +9,24 @@ public class Actor {
     private int x;
     private int y;
     private Image image;
+    static protected int mode;
+    
 
     public Actor(int x, int y) {
         
         this.x = x;
         this.y = y;
     }
-
+    
+    public Actor(int mode) {
+    	this.mode = mode;
+    	
+    }
+    
+    public static void setMode(int num) {
+    	mode = num;
+    }
+    
     public Image getImage() {
         return image;
     }

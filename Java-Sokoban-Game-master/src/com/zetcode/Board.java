@@ -1,11 +1,27 @@
 package com.zetcode;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.LinkedList;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class Board extends JPanel {
 
@@ -15,7 +31,6 @@ public class Board extends JPanel {
 	private int undoCount = 3;
 	private int moveCount;
 	private int timerCount;
-	private JLabel undoCountText = new JLabel("ExtraUndo : "+Integer.toString(undoCount));
 	private UIManager frame;
 	private LevelSelectPanel previousPanel;
 	private Baggage bags = null;
@@ -23,14 +38,25 @@ public class Board extends JPanel {
 	private Replay replay;
 	private FailedDetected failed;
 	private MyTimer time;
+	
+	private JLabel undoCountText = new JLabel("ExtraUndo : "+Integer.toString(undoCount));
 	private ImageIcon backSpaceIcon = new ImageIcon("src/resources/BackSpace/BackSpace.png");
 	private JLabel backSpaceLabel = new JLabel(backSpaceIcon);
-	private Score score;
+	private ImageIcon[] boomImage = new ImageIcon[3];
+	private JLabel[] boomLabel = new JLabel[3];
+//	private ImageIcon completeImage = new ImageIcon("src/resources/Complete & Failed/Complete.png");
+//	private JLabel complteLabel = new JLabel(completeImage);
+//	private ImageIcon failedImage = new ImageIcon("src/resources/Complete & Failed/Failed.png");
+//	private JLabel failedLabel = new JLabel(failedImage);
 	
-	private boolean isReplay = false;
+	private Score score;
+	private int limitTurn = 1000; // 턴제한
+	private Player player;
+	
 	private int size;
 	private boolean isCollision = false;
 	private int levelSelected;
+	int mode;
 	private boolean flag = false; // 밀면서 갔는지 확인하는 함수
 	private String selectCharacter;
 
@@ -51,6 +77,8 @@ public class Board extends JPanel {
 
 	private boolean isCompleted = false;
 	private boolean isFailed = false;
+	
+	private Timer timer;
 
 	private String level[] ={
 			"    ######\n"
@@ -58,10 +86,10 @@ public class Board extends JPanel {
 		  + "    ##$  #\n"
 		  + "  ####  $##\n"
 		  + "  ##  $ $ #\n"
-		  + "#### # ## #   ######\n"
-		  + "##   # ## #####  ..#\n"
+		  + "#### ! !! #   ######\n"
+		  + "##   ! !! #####  ..#\n"
 		  + "## $  $          ..#\n"
-		  + "###### ### #@##  ..#\n"
+		  + "###### !!! #@##  ..#\n"
 		  + "    ##     #########\n"
 		  + "    ########\n",
           
@@ -69,20 +97,20 @@ public class Board extends JPanel {
           + "############\n"
           + "#    #     ###\n"
           + "#    #       #\n"
-          + "#.   # ####  #\n"
-          + "# $    @ ##  #\n"
-          + "#    # #    ##\n"
-          + "###### ##    #\n"
+          + "#.   # !!!!  #\n"
+          + "# $    @ !!  #\n"
+          + "#    # !    ##\n"
+          + "###### !!    #\n"
           + "  #          #\n"
           + "  #    #     #\n"
           + "  ############\n",
           
       	    "        ######## \n"
           + "        #     @# \n"
-          + "        # $#$ ## \n"
+          + "        # $!$ ## \n"
           + "        # $  $# \n"
           + "        ##$ $ # \n"
-          + "######### $ # ###\n"
+          + "######### $ ! ###\n"
           + "#....  ## $  $  #\n"
           + "##...    $  $   #\n"
           + "#....  ##########\n"
@@ -96,7 +124,7 @@ public class Board extends JPanel {
           + "   #  $     $ #  ....#\n"
           + "   # $$ #$ $ $########\n"
           + "####  $ #     #       \n"
-          + "#   # #########       \n"
+          + "#   ! #########       \n"
           + "#    $  ##            \n"
           + "# $$#$$ @#            \n"
           + "#   #   ##            \n"
@@ -104,21 +132,21 @@ public class Board extends JPanel {
           
             "        #####    \n"
           + "        #   #####\n"
-          + "        # #$##  #\n"
+          + "        # !$##  #\n"
           + "        #     $ #\n"
-          + "######### ###   #\n"
+          + "######### !!!   #\n"
           + "#....  ## $  $###\n"
           + "#....    $ $$ ## \n"
           + "#....  ##$  $ @# \n"
           + "#########  $  ## \n"
           + "        # $ $  # \n"
-          + "        ### ## # \n"
+          + "        ### !! # \n"
           + "          #    # \n"
           + "          ###### \n"
  
           };
 
-	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, String selectCharacter) {
+	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, String selectCharacter, int mode) {
 
 		setLayout(null);
 
@@ -132,10 +160,21 @@ public class Board extends JPanel {
 		add(undoCountText);
 		add(backSpaceLabel);
 		
+		for(int i = 0; i < boomImage.length; i++) {
+			boomImage[i] = new ImageIcon("src/resources/Boom/boom"+i+".png");
+			boomLabel[i] = new JLabel(boomImage[i]);
+			boomLabel[i].setBounds(100 + i * 200 , 100, 64, 64);
+			boomLabel[i].setVisible(false);
+			add(boomLabel[i]);
+		}
+		
 		backSpaceLabel.addMouseListener(new MyMouseListener()); 
 		backSpaceLabel.setBounds(25, 20, 128, 128);
 		failed = new FailedDetected(this);
 		time = new MyTimer();
+		
+		this.mode = mode;
+		System.out.println(mode);
 	
 		initBoard();
 	}
@@ -167,14 +206,24 @@ public class Board extends JPanel {
 		
 		this.replay = replay;
 		failed = new FailedDetected(this);
+		time = new MyTimer();
 		
-		isReplay = true;
 		initBoard();
 
 	}
 
 	private void initBoard() {
-
+		
+		timer = new Timer(1000, new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				repaint();
+			}
+			
+		});
+		timer.start();
+		
 		addKeyListener(new TAdapter());
 		setFocusable(true);
 		initWorld();
@@ -200,7 +249,8 @@ public class Board extends JPanel {
 		Wall wall; // 벽
 		Baggage b; // 미는거
 		Area a; // 끝나는거
-
+		Llm llm;// 가운데 안보이는 벽
+		
 		for (int i = 0; i < level[levelSelected].length(); i++) {
 
 			char item = level[levelSelected].charAt(i);
@@ -218,9 +268,15 @@ public class Board extends JPanel {
 				break;
 
 			case '#':
-				wall = new Wall(x, y); // x,y 지점에 Wall 객체 생성
+				wall = new Wall(x, y, mode); // x,y 지점에 Wall 객체 생성
 				walls.add(wall); // Wall 객체를 Wall 어레이 리스트에 넣음
 				x += SPACE; // x에 한칸(SPACE)를 더함
+				break;
+				
+			case '!':
+				llm = new Llm(x, y);
+				walls.add(llm);
+				x += SPACE;
 				break;
 
 			case '$':
@@ -254,10 +310,17 @@ public class Board extends JPanel {
 	}
 
 	private void buildWorld(Graphics g) {
-
-		g.setColor(new Color(100, 240, 170));
+		
+		if (mode == 1) {
+			g.setColor(new Color(0, 0, 0));
+		} else {
+			g.setColor(new Color(250, 240, 170));
+		}
+		
+		
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
-
+		
+		
 		ArrayList<Actor> world = new ArrayList<>();
 
 		world.addAll(walls);
@@ -274,42 +337,63 @@ public class Board extends JPanel {
 				g.drawImage(item.getImage(), item.x() + 16, item.y() + 16, this);
 			}
 			else if(item instanceof Player) {
-				if(selectCharacter.equals("Mario")) {
+				if(selectCharacter.equals("Mario")) { // 마리오 일때
 					g.drawImage(item.getImage(), item.x(), item.y() , this);
 					
-				}else {
+				}else { // 노란모자 일때
 					g.drawImage(item.getImage(), item.x() + 13, item.y() , this);
-					
 				}
 			}
 			else {
-
+				Actor.setMode(mode);
 				g.drawImage(item.getImage(), item.x(), item.y(), this);
 			}
 			
-			if(!isReplay) {
+			if(replay==null) {
 				
 				g.setColor(new Color(0, 0, 0));
 				g.drawString("ExtraUndo : " + Integer.toString(undoCount), w-70, 18);
 			}
 
-			if (isCompleted) { // isCompleted가 true면 화면에 completed를 띄움
-				
-				g.setColor(new Color(0, 0, 0));
-				g.drawString("Completed", w / 2 - 35, 20);
-			}
-
 			if (isFailed) {
 				if(replay==null) {
 					time.setIsFinished(true);
+					
+					if(time.notMoveTime==6) {
+						boomLabel[2].setVisible(true);
+					}
 				}
-				g.setColor(new Color(0, 0, 0));
-				g.drawString("Failed", w / 2 - 35, 20);
 			}
+		    if(limitTurn==player.turn) {
+		    	isFailed();
+	        	
+	        }
+		    if(time.notMoveTime==6) {
+		    	isFailed();
+		    }
 
 		}
+		if(replay==null) {
+			if(time.notMoveTime==4) {
+				boomLabel[0].setVisible(true);
+			}
+			if(time.notMoveTime==5) {
+				boomLabel[1].setVisible(true);
+				
+			}
+		}
 		
-
+		if(time.time >= 1) {
+			
+			g.setColor(Color.BLUE);	
+			String nowTime = Integer.toString(time.time);
+			g.drawString(nowTime,  w-70, 30);
+			
+			
+		}
+		g.setColor(Color.BLUE);
+		String nowTurn = Integer.toString(player.turn);
+		g.drawString(nowTurn,  w-70, 60);
 	}
 
 	@Override
@@ -320,10 +404,14 @@ public class Board extends JPanel {
 	}
 
 	private class TAdapter extends KeyAdapter { // 키값을 클래스에 넘겨줌
-
+		
 		@Override
 		public void keyPressed(KeyEvent e) {
-
+			if(replay==null) {
+				for(int i=0; i<3; i++) {
+					boomLabel[i].setVisible(false);
+				}
+			}
 			if (isCompleted) { // 게임이 끝남.
 				
 				return;
@@ -334,7 +422,7 @@ public class Board extends JPanel {
 				return;
 			}
 
-			if (isReplay != true) {
+			if (replay == null) {
 				int key = e.getKeyCode();
 				flag=false;
 
@@ -515,7 +603,8 @@ public class Board extends JPanel {
 					break;
 
 				case KeyEvent.VK_R:
-
+					time.time = 0;
+					player.turn = 0;
 					restartLevel();
 
 					break;
@@ -534,6 +623,20 @@ public class Board extends JPanel {
 				default:
 					break;
 				}
+				Iterator<Wall> iter = walls.iterator();// 이 부분부터
+				
+				if (mode == 2) {
+
+					if (player.turn > 0)
+
+						for (int i = 0; i < walls.size(); i++) {
+							Wall next = iter.next();
+
+							if (next instanceof Llm && player.turn >= 1) {
+								((Llm) next).rellm();
+							}
+						}
+				} // 이부분까지 설정
 
 				isCompleted();
 				repaint();
@@ -777,7 +880,7 @@ public class Board extends JPanel {
 	}
 
 	public void isCompleted() { // 다 최종지점에 넣었을경우 isCompleted=true
-
+		
 		int nOfBags = baggs.size(); // Bag 객체의 숫자
 		int finishedBags = 0; // Bag객체의 숫자와 finishedBags가 isCompleted=ture == 게임 종료
 
@@ -797,6 +900,8 @@ public class Board extends JPanel {
 		}
 
 		if (finishedBags == nOfBags) { // finishedBag과 nOfbags가 같으면 모두 최종지점에 넣었다는 뜻
+			player.turn = 0;
+			timer.stop();
 			String s = "Completed";
 
 			FileIO replayFileIo = new FileIO();
@@ -820,13 +925,25 @@ public class Board extends JPanel {
 			}
 			
 			isCompleted = true; // 따라서 끝남
+			
+			ImageIcon completeImage = new ImageIcon("src/resources/Complete & Failed/Complete.png");
+			JLabel completeLabel = new JLabel(completeImage);
+			
+			add(completeLabel);
+			completeLabel.setBounds(0, 0, w, h);
+			
 			repaint(); // 컴포넌트의 모양 색상등이 바뀌었을때 사용
 		}
 	}
 
 	public void isFailed() {
+		
 		isFailed = true;
+		
+		
 		if (isFailed) {
+			player.turn = 0;
+			timer.stop();
 			String s = "Failed";
 
 			FileIO fileio = new FileIO();
@@ -837,6 +954,12 @@ public class Board extends JPanel {
 			}
 
 			fileio.replayFileInput(levelSelected, s);
+			
+			ImageIcon failedImage = new ImageIcon("src/resources/Complete & Failed/Failed.png");
+			JLabel failedLabel = new JLabel(failedImage);
+			
+			add(failedLabel);
+			failedLabel.setBounds(0, 0, w, h);
 		}
 		repaint();
 
@@ -928,6 +1051,7 @@ public class Board extends JPanel {
 		return soko;
 	}
 	
+	
 	public void callIsEntered(Baggage bags) {
 		isEntered(bags);
 	}
@@ -966,6 +1090,8 @@ public class Board extends JPanel {
 			if(la.equals(backSpaceLabel)) {
 				time.setIsFinished(true);
 				frame.changePanel(previousPanel);
+				isFailed = false;
+				time.notMoveTime = 0;
 			}
 		}
 	}

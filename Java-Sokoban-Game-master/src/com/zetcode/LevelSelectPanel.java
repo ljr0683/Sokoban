@@ -10,8 +10,8 @@ import javax.swing.*;
 public class LevelSelectPanel extends JPanel {
 	private JButton completedReplayButton = new JButton("Completed Replay");
 	private JButton failedReplayButton = new JButton("Failed Replay");
-	private JButton startButton = new JButton("start");
-	private JButton backSpaceButton = new JButton("<-");
+	private JButton startButton = new JButton("Start");
+	private JButton randomStartButton = new JButton("Random Mode Start");
 	private JLabel score[] = new JLabel[5];
 	private String selectCharacter;
 	private JLabel backSpaceLabel;
@@ -46,18 +46,21 @@ public class LevelSelectPanel extends JPanel {
 		add(completedReplayButton);
 		add(failedReplayButton);
 		add(startButton);
+		add(randomStartButton);
 		score[levelSelected] = new JLabel(Integer.toString(levelSelected));
 		add(score[levelSelected]);
 		
 		backSpaceLabel.setBounds(25, 20, 128, 128);
-		completedReplayButton.setBounds(500, 700, 120, 50);
-		failedReplayButton.setBounds(740, 700, 120, 50);
-		startButton.setBounds(980, 700, 120, 50);
+		completedReplayButton.setBounds(400, 700, 120, 50);
+		failedReplayButton.setBounds(600, 700, 120, 50);
+		startButton.setBounds(800, 700, 120, 50);
+		randomStartButton.setBounds(1000, 700, 120, 50);
 		
 		backSpaceLabel.addMouseListener(new MyMouseListener()); // 뒤로가기 버튼에 액션리스너 등록
 		completedReplayButton.addActionListener(new MyActionListener());
 		failedReplayButton.addActionListener(new MyActionListener());
 		startButton.addActionListener(new MyActionListener());
+		randomStartButton.addActionListener(new MyActionListener());
 	}
 	
 	public void setScore(int levelSelected, int score) {
@@ -83,9 +86,6 @@ public class LevelSelectPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JButton b = (JButton) e.getSource();
-			if(b.equals(backSpaceButton)) {
-				frame.changePanel(previousPanel);
-			}
 			
 			if(b.equals(completedReplayButton)) {
 				
@@ -111,7 +111,17 @@ public class LevelSelectPanel extends JPanel {
 			}
 			
 			if(b.equals(startButton)) {
-				Board board = new Board(levelSelected, panel, frame, selectCharacter);
+				Board board = new Board(levelSelected, panel, frame, selectCharacter, 0);
+				width = board.getBoardWidth();
+				height = board.getBoardHeight();
+				frame.changePanel(board, width, height);
+			}
+			
+			if(b.equals(randomStartButton)) {
+				Random rand = new Random(System.currentTimeMillis());
+				int mode = rand.nextInt(3);
+				System.out.println(mode);
+				Board board = new Board(levelSelected, panel, frame, selectCharacter, mode);
 				width = board.getBoardWidth();
 				height = board.getBoardHeight();
 				frame.changePanel(board, width, height);

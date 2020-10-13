@@ -4,7 +4,9 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 
 public class Area extends Actor {
-
+	private Image image;
+	private ImageIcon iicon;
+	private ImageIcon iiicon;
     public Area(int x, int y) {
         super(x, y);
         
@@ -12,9 +14,15 @@ public class Area extends Actor {
     }
     
     private void initArea() { //Area √ ±‚»≠
-
-        ImageIcon iicon = new ImageIcon("src/resources/area.png");
-        Image image = iicon.getImage();
-        setImage(image);
+    	if(mode==1) {
+     		iicon = new ImageIcon("src/resources/area1.png");
+			image = iicon.getImage();
+			setImage(image);
+		}
+		else {
+			iicon = new ImageIcon("src/resources/area.png");
+			image = iicon.getImage();
+			setImage(image);
+		}
     }
 }
