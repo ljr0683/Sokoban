@@ -35,7 +35,7 @@ public class MainPanel extends JPanel {
 	class MyMouseListener extends MouseAdapter{
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			frame.changePanel(new LevelPanel(frame, panel));
+			frame.changePanel(new LevelPanel(frame));
 		}
 	}
 

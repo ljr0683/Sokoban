@@ -10,7 +10,6 @@ public class LevelPanel extends JPanel {
 	private JLabel[] levelJLabel = new JLabel[5];
 
 	private UIManager frame; // GameStart 클래스의 change 메소드를 사용하기 위해 선언
-	private MainPanel previousPanel; // 뒤로가기 버튼을 위해 선언(전 패널 객체를 얻기 위해)
 	private LevelPanel panel; //board에서 뒤로가기 위한 패널 파라미터로 넘겨주는 패널
 	private SelectCharacterPanel selectCharacterPanel;
 	private ImageIcon backGroundImage;
@@ -18,10 +17,9 @@ public class LevelPanel extends JPanel {
 	private ImageIcon[] mouseEnteredIcon = new ImageIcon[5];
 
 
-	public LevelPanel(UIManager frame, MainPanel previousPanel) { //생성자
+	public LevelPanel(UIManager frame) { //생성자
 		setLayout(null); // 레이아웃을 설정 x 내 마음대로 배치 가능
 		this.frame = frame; // GameStart 객체를 받아옴 change 메소드를 사용하기 위함
-		this.previousPanel = previousPanel; // 뒤로가기를 위함
 		panel = this;
 		
 		
@@ -83,6 +81,5 @@ public class LevelPanel extends JPanel {
 			}
 		}
 	}
-
-
+	
 }

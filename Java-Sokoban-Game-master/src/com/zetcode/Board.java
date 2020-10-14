@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -26,7 +25,6 @@ public class Board extends JPanel {
 
 	private Deque<Integer> replay_Deque = new LinkedList<>();
 
-	private JButton backSpaceButton = new JButton("<-");
 	private int undoCount = 3;
 	private int moveCount;
 	private int limitturn = 1;
@@ -41,7 +39,6 @@ public class Board extends JPanel {
 	private MyTimer time;
 	private Timer timer;
 	
-
 	private ImageIcon backSpaceIcon = new ImageIcon("src/resources/BackSpace/BackSpace.png");
 	private JLabel backSpaceLabel = new JLabel(backSpaceIcon);
 	private ImageIcon[] boomImage = new ImageIcon[3];
@@ -52,7 +49,7 @@ public class Board extends JPanel {
 	private int size;
 	private boolean isCollision = false;
 	private int levelSelected;
-	int mode;
+	private int mode;
 	private boolean flag = false; // 밀면서 갔는지 확인하는 함수
 	private String selectCharacter;
 
@@ -169,6 +166,8 @@ public class Board extends JPanel {
 		time = new MyTimer();
 		
 		this.mode = mode;
+		
+		limitturn = 500;
 	
 		initBoard();
 	}
@@ -246,22 +245,6 @@ public class Board extends JPanel {
 		Baggage b; // 미는거
 		Area a; // 끝나는거
 		Llm llm;// 가운데 안보이는 벽
-		
-		if(this.levelSelected == 0) {
-			this.limitturn=200;
-		}
-		else if(this.levelSelected == 1){
-			this.limitturn=200;
-		}
-		else if(this.levelSelected == 2){
-			this.limitturn=200;
-		}
-		else if(this.levelSelected == 3){
-			this.limitturn=200;
-		}
-		else if(this.levelSelected == 4){
-			this.limitturn=200;
-		}
 		
 		for (int i = 0; i < level[levelSelected].length(); i++) {
 
@@ -364,7 +347,10 @@ public class Board extends JPanel {
 			if(!isReplay) {
 				
 				g.setColor(new Color(0, 0, 0));
-				g.drawString("ExtraUndo : " + Integer.toString(undoCount), w-70, 18);
+				g.drawString("ExtraUndo : " + Integer.toString(undoCount), w-90, 18);
+				if(mode==3) {
+				g.drawString("MoveLimited : " + limitturn , w-90, 80);
+				}
 			}
 
 			
@@ -407,13 +393,13 @@ public class Board extends JPanel {
 			
 			g.setColor(Color.BLUE);	
 			String nowTime = Integer.toString(time.time);
-			g.drawString("Time : "+nowTime,  w-70, 40);
+			g.drawString("Time : "+nowTime,  w-90, 40);
 		}
 		
 		if(!(mode==4)) {
 		g.setColor(Color.BLUE);
 		String nowTurn = Integer.toString(moveCount);
-		g.drawString("MoveCount : "+nowTurn,  w-70, 60);
+		g.drawString("MoveCount : "+nowTurn,  w-90, 60);
 		}
 	}
 	
@@ -1015,7 +1001,6 @@ public class Board extends JPanel {
 	
 	private void undo() {
 		if(!replay_Deque.isEmpty()) {
-			System.out.println("11");
 			int key = replay_Deque.pollLast();
 			replay = new Replay(this);
 			replay.offerReplay_Deque(key);

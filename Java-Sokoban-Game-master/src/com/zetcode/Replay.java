@@ -110,6 +110,7 @@ public class Replay {
 			if(!undo)
 				replay_Deque.offerFirst(key3);
 			break;
+			
 		case Board.RIGHT_COLLISION:
 			if (board.getIsCollision()) {
 				for(int i=0; i<board.getBaggsSize(); i++) {
@@ -194,7 +195,7 @@ public class Replay {
 				key2 = replay_Deque.poll();
 				replay_Stack.push(key2);
 				replay_Deque.offer(key2);
-				break;
+			break;
 				
 			default:
 				break;

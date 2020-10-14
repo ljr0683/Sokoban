@@ -1,16 +1,8 @@
 package com.zetcode;
 
-import java.awt.Image;
 import java.util.*;
 
-import javax.swing.ImageIcon;
-
 public class MyTimer {
-	private Image image;
-	private ImageIcon boom1;
-    private ImageIcon boom2;
-    private ImageIcon boom3;
-    
 	static int boom=0;
 	static int notMoveTime=0;
 	static int time;
