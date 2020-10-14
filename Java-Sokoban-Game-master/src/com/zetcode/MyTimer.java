@@ -32,7 +32,6 @@ public class MyTimer {
 				if(!isfinished) {
 					time++;
 					notMoveTime++;
-					System.out.println(time);
 					if(notMoveTime>3) {
 						boom+=1;
 					}
@@ -58,10 +57,5 @@ public class MyTimer {
 	public int getTime() {
 		return time;
 	}
-
-
-	private void setImage(Image image2) {
-	// TODO Auto-generated method stub
 	
-	}
 }

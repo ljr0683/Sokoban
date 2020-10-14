@@ -1,7 +1,6 @@
 package com.zetcode;
 
 import java.awt.*;
-import java.util.Random;
 import javax.swing.JFrame;
 
 public class Sokoban {

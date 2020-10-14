@@ -17,8 +17,8 @@ public class SelectCharacterPanel extends JPanel {
 	private ImageIcon enteredMouseYellowImage = new ImageIcon("src/resources/YellowHat/2Player.png");
 	
 	private JLabel backSpaceLabel;
-	private JButton MarioButton = new JButton(defaultMarioImage);
-	private JButton YellowHatButton = new JButton(defaultYellowHatImage);
+	private JButton MarioButton = new JButton(" : Mario",defaultMarioImage);
+	private JButton YellowHatButton = new JButton(" : YellowHat",defaultYellowHatImage);
 	private ImageIcon backGroundImage;
 	
 	
@@ -34,19 +34,21 @@ public class SelectCharacterPanel extends JPanel {
 		ImageIcon backSpaceIcon = new ImageIcon("src/resources/BackSpace/BackSpace.png");
 		backSpaceLabel = new JLabel(backSpaceIcon);
 		
-		backGroundImage = new ImageIcon("src/resources/Background/DefaultBackground.png");
+		backGroundImage = new ImageIcon("src/resources/Background/SelectCharacterBackGround.png");
 		
 		add(backSpaceLabel);
 		add(YellowHatButton);
 		add(MarioButton);
-		YellowHatButton.setBounds(750, 450, 200, 200);
-		MarioButton.setBounds(450, 450, 200, 200);
+		YellowHatButton.setBounds(850, 450, 150, 64);
+		MarioButton.setBounds(550, 450, 150, 64);
 		backSpaceLabel.setBounds(25, 20, 128, 128);
+		
+		YellowHatButton.setHorizontalAlignment(SwingConstants.LEFT);
+		MarioButton.setHorizontalAlignment(SwingConstants.LEFT);
 		
 		backSpaceLabel.addMouseListener(new MyMouseListener());
 		YellowHatButton.addActionListener(new MyActionListener());
 		MarioButton.addActionListener(new MyActionListener());
-		
 		
 		YellowHatButton.setRolloverIcon(enteredMouseYellowImage);
 		MarioButton.setRolloverIcon(enteredMouseMarioImage);
@@ -62,17 +64,13 @@ public class SelectCharacterPanel extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			JButton b = (JButton) e.getSource();
 
-			
-			
 			if(b.equals(YellowHatButton)) {
 				LevelSelectPanel level = new LevelSelectPanel(frame, panel, levelSelected, "YellowHat");
-				
 				frame.changePanel(level);
 			}
 			
 			if(b.equals(MarioButton)) {
 				LevelSelectPanel level = new LevelSelectPanel(frame, panel, levelSelected, "Mario");
-				
 				frame.changePanel(level);
 			}
 		}

@@ -17,6 +17,7 @@ public class LevelPanel extends JPanel {
 	private ImageIcon[] normalIcon = new ImageIcon[5];
 	private ImageIcon[] mouseEnteredIcon = new ImageIcon[5];
 
+
 	public LevelPanel(UIManager frame, MainPanel previousPanel) { //생성자
 		setLayout(null); // 레이아웃을 설정 x 내 마음대로 배치 가능
 		this.frame = frame; // GameStart 객체를 받아옴 change 메소드를 사용하기 위함
@@ -51,6 +52,7 @@ public class LevelPanel extends JPanel {
 			for(int i=0; i<levelJLabel.length; i++) {
 				if(la.equals(levelJLabel[i])) {
 					la.setIcon(normalIcon[i]);
+
 					selectCharacterPanel  = new SelectCharacterPanel(frame, panel, i);
 					frame.changePanel(selectCharacterPanel);
 				}
@@ -63,7 +65,9 @@ public class LevelPanel extends JPanel {
 			
 			for(int i=0; i<levelJLabel.length; i++) {
 				if(la.equals(levelJLabel[i])) {
+					
 					la.setIcon(mouseEnteredIcon[i]);
+					
 				}
 			}
 		}
