@@ -1,7 +1,6 @@
 package com.zetcode;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -42,7 +41,7 @@ public class Board extends JPanel {
 	private MyTimer time;
 	private Timer timer;
 	
-	private JLabel undoCountText = new JLabel("ExtraUndo : "+Integer.toString(undoCount));
+
 	private ImageIcon backSpaceIcon = new ImageIcon("src/resources/BackSpace/BackSpace.png");
 	private JLabel backSpaceLabel = new JLabel(backSpaceIcon);
 	private ImageIcon[] boomImage = new ImageIcon[3];
@@ -77,67 +76,71 @@ public class Board extends JPanel {
 	private boolean isReplay = false;
 	
 	private String level[] ={
-			 "            \n" //11회
-			+"            \n"   
-			+"     ###    \n"
-			+"     #.#    \n"
-			+"     #$#### \n"
-			+"   ###  $.# \n"
-			+"   #.$ @### \n"
-			+"   ####$#   \n"
-			+"      #.#   \n"
-			+"      ###   \n"
-			
-			  ,
-
-			 "            \n" 
-			+"  ######    \n" //70회
-			+"  #    #    \n" 
-			+"  # $$$##   \n"
-			+"  #  !..### \n"
-			+"  ##  ..$ # \n"      
-			+"   # @    # \n"
-			+"   ######## \n"
-			   ,
-			 "            \n" 
-			+"            \n" //35회
-			+"            \n"
-			+"    ######  \n"
-			+"    #    #  \n"
-			+"  ###$$$ #  \n"
-			+"  #@ $.. #  \n"
-			+"  # $...##  \n"
-			+"  ####  #   \n"
-			+"     ####   \n"
-			,
-			 "              \n"
-			+"              \n"
-			+"              \n"
-			+"  #######     \n"
-			+"  #     ###   \n"
-			+" ##$!!!   #   \n"
-			+" # @ $  $ #   \n"
-			+" # ..# $ ##   \n"
-			+" ##..#   #    \n"
-			+"  ########    \n" //118회
-			
-			,
-			
-			 "             \n"
-			+"             \n"
-			+"      ###### \n"
-			+"  #####.   # \n"
-			+"  #  #..!! # \n"
-			+"  #  $..   # \n"
-			+"  #  ! .! ## \n"
-			+" ### !!$!  # \n"//148
-			+" # $    $$ # \n"
-			+" # !$#  #  # \n" 
-			+" #@  ####### \n"
-			+" #####       \n"
-			 
-			   };
-
+			"    ######\n"
+		  + "    ##   #\n"
+		  + "    ##$  #\n"
+		  + "  ####  $##\n"
+		  + "  ##  $ $ #\n"
+		  + "#### ! !! #   ######\n"
+		  + "##   ! !! #####  ..#\n"
+		  + "## $  $          ..#\n"
+		  + "###### !!! #@##  ..#\n"
+		  + "    ##     #########\n"
+		  + "    ########\n",
+          
+      		"    ######\n"
+          + "############\n"
+          + "#..  #     ###\n"
+          + "#..  # $  $  #\n"
+          + "#..  #$!!!!  #\n"
+          + "#..    @ !!  #\n"
+          + "#..  # !  $ ##\n"
+          + "###### !!$ $ #\n"
+          + "  # $  $ $ $ #\n"
+          + "  #    #     #\n"
+          + "  ############\n",
+          
+      	    "        ######## \n"
+          + "        #     @# \n"
+          + "        # $!$ ## \n"
+          + "        # $  $# \n"
+          + "        ##$ $ # \n"
+          + "######### $ ! ###\n"
+          + "#....  ## $  $  #\n"
+          + "##...    $  $   #\n"
+          + "#....  ##########\n"
+          + "########         \n", 
+          
+            "              ########\n"
+          + "              #  ....#\n"
+          + "   ############  ....#\n"
+          + "   #    #  $ $   ....#\n"
+          + "   # $$$#$  $ #  ....#\n"
+          + "   #  $     $ #  ....#\n"
+          + "   # $$ #$ $ $########\n"
+          + "####  $ #     #       \n"
+          + "#   ! #########       \n"
+          + "#    $  ##            \n"
+          + "# $$#$$ @#            \n"
+          + "#   #   ##            \n"
+          + "#########             \n",
+          
+            "        #####    \n"
+          + "        #   #####\n"
+          + "        # !$##  #\n"
+          + "        #     $ #\n"
+          + "######### !!!   #\n"
+          + "#....  ## $  $###\n"
+          + "#....    $ $$ ## \n"
+          + "#....  ##$  $ @# \n"
+          + "#########  $  ## \n"
+          + "        # $ $  # \n"
+          + "        ### !! # \n"
+          + "          #    # \n"
+          + "          ###### \n"
+ 
+          };
+	
 	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, String selectCharacter, int mode) {
 
 		setLayout(null);
@@ -148,8 +151,9 @@ public class Board extends JPanel {
 		this.selectCharacter = selectCharacter;
 		this.moveCount = 0;
 		this.timerCount = 0;
-
-		add(undoCountText);
+		
+	
+		
 		add(backSpaceLabel);
 		
 		for(int i = 0; i < boomImage.length; i++) {
@@ -244,19 +248,19 @@ public class Board extends JPanel {
 		Llm llm;// 가운데 안보이는 벽
 		
 		if(this.levelSelected == 0) {
-			this.limitturn=11;
+			this.limitturn=200;
 		}
 		else if(this.levelSelected == 1){
-			this.limitturn=80;
+			this.limitturn=200;
 		}
 		else if(this.levelSelected == 2){
-			this.limitturn=40;
+			this.limitturn=200;
 		}
 		else if(this.levelSelected == 3){
-			this.limitturn=128;
+			this.limitturn=200;
 		}
 		else if(this.levelSelected == 4){
-			this.limitturn=158;
+			this.limitturn=200;
 		}
 		
 		for (int i = 0; i < level[levelSelected].length(); i++) {
@@ -403,13 +407,13 @@ public class Board extends JPanel {
 			
 			g.setColor(Color.BLUE);	
 			String nowTime = Integer.toString(time.time);
-			g.drawString(nowTime,  w-70, 30);
+			g.drawString("Time : "+nowTime,  w-70, 40);
 		}
 		
 		if(!(mode==4)) {
 		g.setColor(Color.BLUE);
 		String nowTurn = Integer.toString(moveCount);
-		g.drawString(nowTurn,  w-70, 60);
+		g.drawString("MoveCount : "+nowTurn,  w-70, 60);
 		}
 	}
 	

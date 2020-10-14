@@ -53,7 +53,6 @@ public class LevelSelectPanel extends JPanel {
 			score = 0;
 		}
 		else {
-			System.out.println("asdf");
 			try {
 				FileReader fr = new FileReader(scoreFile);
 				BufferedReader bufReader = new BufferedReader(fr);

@@ -23,8 +23,7 @@ public class FailedDetected {
 
 								for (int k = 0; k < board.getBaggsSize(); k++) {
 									Baggage item3 = board.getBaggs(k);
-									if (!item3.equals(bag) && item2.isBottomCollision(item3)
-											|| item2.isTopCollision(item3)) { // item3는 item2 아래의 bag
+									if (!item3.equals(bag) && item2.isBottomCollision(item3) || item2.isTopCollision(item3)) { // item3는 item2 아래의 bag
 
 										return true;
 									}
@@ -133,9 +132,9 @@ public class FailedDetected {
 				}
 			}
 
-			for (int i = 0; i < board.getBaggsSize(); i++) { // 4개다 bag일때 이거 수정해야됨
+			for (int i = 0; i < board.getBaggsSize(); i++) { // 4개다 bag일때
 				Baggage item1 = board.getBaggs(i);
-				if (!item1.equals(bag) && bag.isTopCollision(item1) || bag.isBottomCollision(item1)) {
+				if (!item1.equals(bag) && bag.isTopCollision(item1)) {
 
 					for (int j = 0; j < board.getBaggsSize(); j++) {
 
@@ -153,6 +152,28 @@ public class FailedDetected {
 
 										return true;
 									}
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			for (int i = 0; i < board.getBaggsSize(); i++) { // 4개다 bag일때
+				Baggage item1 = board.getBaggs(i);
+				if (!item1.equals(bag) && bag.isBottomCollision(item1)) {
+
+					for (int j = 0; j < board.getBaggsSize(); j++) {
+
+						Baggage item2 = board.getBaggs(j);
+
+						if (!item2.equals(item1) && !item2.equals(bag)) {
+
+							if (item1.isLeftCollision(item2) || item1.isRightCollision(item2)) {
+
+								for (int k = 0; k < board.getBaggsSize(); k++) {
+
+									Baggage item3 = board.getBaggs(k);
 
 									if (item2.isTopCollision(item3)) {
 
